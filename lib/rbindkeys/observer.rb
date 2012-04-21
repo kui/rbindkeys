@@ -29,7 +29,7 @@ module Rbindkeys
         trap :TERM, method(:destroy)
         @device.listen do |event|
           puts event.hr_code if @verbose
-          if resolve(event) == false
+          if resolve(event) == true
             @virtual.write_input_event event
           end
         end
@@ -69,7 +69,7 @@ module Rbindkeys
       if not r.nil?
         r.call event, self
       else
-        false
+        true
       end
     end
 
