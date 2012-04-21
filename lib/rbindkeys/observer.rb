@@ -5,45 +5,43 @@ module Rbindkeys
 
   # main event loop class
   class Observer
-    attr_reader :device, :config, :context, :key_binds, :verbose
+    attr_reader :device, :config, :pressed_keys, :key_binds, :verbose
 
     def initialize config_name, device_location
       @device = Device.new device_location
       @virtual = VirtualDevice.new
       @config_file = config_name
-      @context = []
+      @pressed_keys = {}
       @key_binds = {}
       @verbose = true
     end
 
     # main loop
     def start
-
       @device.grab
       @virtual.create
 
       begin
-        @device.release_all
-
         trap :INT, method(:destroy)
         trap :TERM, method(:destroy)
         @device.listen do |event|
-          puts event.hr_code if @verbose
-          if resolve(event) == true
+          if event.type != EV_KEY
             @virtual.write_input_event event
+          else
+            puts "read #{event.hr_code}:#{event.value==1?'pressed':'released'}" if @verbose
+            if resolve(event) == true
+              @virtual.write_input_event event
+            end
           end
         end
       rescue => e
         puts "#{e.class}: #{e.to_s}"
-        puts e.backtrace.map{|s| "\t"+s.to_s+"\n"}
+        puts e.backtrace.map{|s| "\t#{s.to_s}\n"}
         destroy
       end
     end
 
     def destroy
-      @device.release_all
-      @virtual.release_all
-
       begin
         @device.ungrab
         puts "success device.ungrab" if @verbose
@@ -61,7 +59,6 @@ module Rbindkeys
       end
 
       exit true
-
     end
 
     def resolve event
