@@ -1,11 +1,14 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
+require "revdev"
 
 module Rbindkeys
 
   # main event loop class
   class Observer
     attr_reader :device, :config, :pressed_keys, :key_binds, :verbose
+
+    VIRTUAL_DEVICE_NAME = "rbindkyes"
 
     def initialize config_name, device_location
       @device = Device.new device_location
@@ -19,18 +22,25 @@ module Rbindkeys
     # main loop
     def start
       @device.grab
-      @virtual.create
+      @virtual.create VIRTUAL_DEVICE_NAME, @device.device_id
 
       begin
         trap :INT, method(:destroy)
         trap :TERM, method(:destroy)
         @device.listen do |event|
-          if event.type != EV_KEY
+          if event.type != Revdev::EV_KEY
             @virtual.write_input_event event
           else
-            puts "read #{event.hr_code}:#{event.value==1?'pressed':'released'}" if @verbose
+            puts "read	#{event.hr_code}:#{event.value==1?'pressed':'released'} (#{pressed_keys.keys.join(', ')})" if @verbose
             if resolve(event) == true
               @virtual.write_input_event event
+            end
+            if event.value == 1
+              @pressed_keys[event.code] = true
+            elsif event.value == 0
+              if @pressed_keys.delete(event.code).nil?
+                STDERR.puts "#{event.code} does not exists"
+              end
             end
           end
         end
