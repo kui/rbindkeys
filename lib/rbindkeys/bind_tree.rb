@@ -48,8 +48,10 @@ module Rbindkeys
           raise ArgumentError, "expect a sorted Array as input"
         end
         last_code = code
-        subtree = subtree[code]
-        break if subtree.nil?
+
+        if subtree.has_key? code
+          subtree = subtree[code]
+        end
       end
 
       if subtree.nil?

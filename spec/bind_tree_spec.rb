@@ -58,7 +58,7 @@ describe BindTree do
         @bt.bind [1,2,3], [4,5,6]
         @bt.bind [1,2,0], [6]
         @bt.bind [1,3], [5,6]
-        @bt.bind [1,1], lambda{}
+        @bt.bind [1,10,0], [55]
         @bt.bind [2], [2]
       end
       context "with unsorted input" do
@@ -80,6 +80,12 @@ describe BindTree do
         it "should return nil" do
           @bt.resolve([4]).should be_nil
           @bt.resolve([1,4]).should be_nil
+        end
+      end
+      context "with input as super set of binded keys" do
+        it "should return Arrays" do
+          @bt.resolve([1,2,4,5,0]).should == [6]
+          @bt.resolve([1,4,5,10,0]).should == [55]
         end
       end
     end
