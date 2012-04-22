@@ -2,11 +2,13 @@
 
 require "rubygems"
 require "rbindkeys/version"
+require "rbindkeys/bind_tree"
 require "rbindkeys/observer"
 require "rbindkeys/device"
 require "rbindkeys/virtual_device"
 
 module Rbindkeys
+  class BindTree; end
   class Observer; end
   class Devicie; end
   class VirtualDevice; end
