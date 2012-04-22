@@ -3,9 +3,11 @@
 # bind :left_ctrl, :caps
 # bind :caps, :left_ctrl
 
-bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
+pre_bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
 
-bind_key KEY_LEFTCTRL do |event, context|
-  light_on LED_CAPSL
-  send_key KEY_CAPSLOCK
-end
+# bind_event KEY_LEFTCTRL do |event, context|
+#   led LED_CAPSL, event.value
+#   send_key KEY_CAPSLOCK
+# end
+
+# bind_key [KEY_CAPSLOCK, KEY_F], KEY_RIGHT
