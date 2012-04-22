@@ -44,13 +44,7 @@ module Rbindkeys
               @virtual.write_input_event event
             end
 
-            if event.value == 1
-              @pressed_keys[event.code] = true
-            elsif event.value == 0
-              if @pressed_keys.delete(event.code).nil?
-                STDERR.puts "#{event.code} does not exists on @pressed_keys"
-              end
-            end
+            process_pressed_keys event
           end
         rescue => e
           puts "#{e.class}: #{e.to_s}"
@@ -87,6 +81,16 @@ module Rbindkeys
       end
 
       exit true
+    end
+
+    def process_pressed_keys event
+      if event.value == 1
+        @pressed_keys[event.code] = true
+      elsif event.value == 0
+        if @pressed_keys.delete(event.code).nil?
+          STDERR.puts "#{event.code} does not exists on @pressed_keys"
+        end
+      end
     end
 
     def resolve event
