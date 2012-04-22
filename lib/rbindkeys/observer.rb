@@ -33,6 +33,7 @@ module Rbindkeys
 
       trap :INT, method(:destroy)
       trap :TERM, method(:destroy)
+
       @device.listen do |event|
         begin
           if event.type != Revdev::EV_KEY
@@ -42,11 +43,12 @@ module Rbindkeys
             if resolve(event) == true
               @virtual.write_input_event event
             end
+
             if event.value == 1
               @pressed_keys[event.code] = true
             elsif event.value == 0
               if @pressed_keys.delete(event.code).nil?
-                STDERR.puts "#{event.code} does not exists"
+                STDERR.puts "#{event.code} does not exists on @pressed_keys"
               end
             end
           end
@@ -118,10 +120,10 @@ module Rbindkeys
       input = parse_code input
       output = parse_code output
 
-      bind_event input do |event, rbindkeys|
-        send_key output, event.value
-        false
-      end
+      input = [input] if input.kind_of? Fixnum
+      output = [output] if output.kind_of? Fixnum
+
+      @key_binds[input] = output
     end
 
     def bind_event input, &block

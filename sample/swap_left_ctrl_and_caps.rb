@@ -6,9 +6,9 @@
 pre_bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
 pre_bind_key KEY_LEFTCTRL, KEY_CAPSLOCK
 
+bind_key [KEY_CAPSLOCK, KEY_F], KEY_RIGHT
+
 # bind_event KEY_LEFTCTRL do |event, context|
 #   led LED_CAPSL, event.value
 #   send_key KEY_CAPSLOCK
 # end
-
-# bind_key [KEY_CAPSLOCK, KEY_F], KEY_RIGHT
