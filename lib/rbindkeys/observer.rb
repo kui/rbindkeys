@@ -88,7 +88,7 @@ module Rbindkeys
     end
 
     def resolve event
-      event.code = @pre_key_binds[event.code] or event.code
+      event.code = (@pre_key_binds[event.code] or event.code)
       r = @key_binds[event.code]
       if not r.nil?
         r.call event, self
@@ -98,6 +98,7 @@ module Rbindkeys
     end
 
     # entring key binds proccessed before processing main key binds
+    # pre_bind_key cannot use combination key inputs/outputs
     def pre_bind_key input, output
       begin
         input = parse_code input, 2
@@ -106,7 +107,7 @@ module Rbindkeys
         raise ArgumentError, "expect Symbol or Fixnum"
       end
 
-      if @pre_key_binds.have_key? input
+      if @pre_key_binds.has_key? input
         raise ArgumentError, "1st arg (#{input}) was already entried"
       end
 
