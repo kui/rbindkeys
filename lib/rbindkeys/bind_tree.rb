@@ -54,13 +54,18 @@ module Rbindkeys
         end
       end
 
-      if subtree.nil?
+      subtree = (subtree and subtree[tail_code])
+
+      if subtree.nil? or subtree.kind_of? Hash
         return nil
+      elsif subtree.kind_of? Array
+        return subtree
       else
-        return subtree[tail_code]
+        raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"
       end
     end
 
+    class UnexpecedLeafError < RuntimeError; end
     class DuplicateNodeError < ArgumentError; end
   end
 end
