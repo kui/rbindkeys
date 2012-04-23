@@ -80,6 +80,7 @@ describe BindTree do
         it "should return nil" do
           @bt.resolve([4]).should be_nil
           @bt.resolve([1,4]).should be_nil
+          @bt.resolve([1]).should be_nil
         end
       end
       context "with input as super set of binded keys" do
