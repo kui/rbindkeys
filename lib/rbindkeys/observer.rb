@@ -51,12 +51,13 @@ module Rbindkeys
           else
             if @verbose
               s = event.value == 0 ? 'released' : event.value == 1 ? 'pressed' : 'pressing'
-              puts "read\t#{event.hr_code}(#{event.code}):#{s}"
+              puts "read\t#{event.hr_type}:#{event.hr_code}(#{event.code}):#{s}"
             end
             if resolve(event) == true
               if @verbose
                 s = event.value == 0 ? 'released' : event.value == 1 ? 'pressed' : 'pressing'
-                puts "write\t#{event.hr_code}(#{event.code}):#{s}"
+                puts "write\t#{event.hr_type}:#{event.hr_code}(#{event.code}):#{s}"
+                puts
               end
               @virtual.write_input_event event
             end
@@ -105,7 +106,7 @@ module Rbindkeys
         @pressed_keys << event.code
       elsif event.value == 0
         if @pressed_keys.delete(event.code).nil?
-          STDERR.puts "#{event.code} does not exists on @pressed_keys"
+          STDERR.puts "WARNING: #{event.code} does not exists on @pressed_keys"
         end
       end
     end
@@ -117,10 +118,13 @@ module Rbindkeys
       input.sort!
       input.push event.code
       r = @key_binds.resolve input
+      p r
       if r.nil?
         true
       elsif r.kind_of? Array
         convert_virtual_pressed_keys event, input, r
+      else
+        STDERR.puts "ERROR: unexpected bind #{r.inspect}"
       end
     end
 
@@ -148,7 +152,7 @@ module Rbindkeys
     # send a key event
     def send_key code, state
       code = parse_code code
-      ie = InputEvent.new nil, EV_LED, code, state
+      ie = InputEvent.new nil, EV_KEY, code, state
       @virtual.write_input_event ie
       if @verbose
         s = ie.value == 0 ? 'released' : ie.value == 1 ? 'pressed' : 'pressing'
