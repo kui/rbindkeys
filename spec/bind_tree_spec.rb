@@ -52,41 +52,51 @@ describe BindTree do
         end
       end
     end # describe
-    describe "BindTree#resolve" do
+  end
+
+  context "BindTree constracted" do
+    before do
+      @bt = BindTree.new
+      @bt.bind [1,2,3], [4,5,6]
+      @bt.bind [1,2,0], [6]
+      @bt.bind [1,3], [5,6]
+      @bt.bind [1,10,0], [55]
+      @bt.bind [2], [2]
+    end
+
+    describe "BindTree#resolve_for_pressed_event" do
       before do
-        @bt = BindTree.new
-        @bt.bind [1,2,3], [4,5,6]
-        @bt.bind [1,2,0], [6]
-        @bt.bind [1,3], [5,6]
-        @bt.bind [1,10,0], [55]
-        @bt.bind [2], [2]
+        @ev = Revdev::InputEvent.new nil, Revdev::EV_KEY, 0, 1
       end
-      context "with unsorted input" do
+      context "with unsorted pressed keys" do
         it "should rase" do
           begin
-            @bt.resolve([2, 1, 3]).should
+            @bt.resolve(@ev, [2, 1]).should
             violated "should raise"
           rescue => e
           end
         end
       end
-      context "with binded input" do
+      context "with binded pressed keys" do
         it "should return Arrays" do
-          @bt.resolve([2]).should == [2]
-          @bt.resolve([1,2,0]).should == [6]
+          @bt.resolve(@ev, [1,2]).should == [6]
+          @ev.code = 2
+          @bt.resolve(@ev, []).should == [2]
         end
       end
-      context "with no binded input" do
+      context "with no binded pressed keys" do
         it "should return nil" do
-          @bt.resolve([4]).should be_nil
-          @bt.resolve([1,4]).should be_nil
-          @bt.resolve([1]).should be_nil
+          @ev.code = 4
+          @bt.resolve(@ev, []).should be_nil
+          @bt.resolve(@ev, [1]).should be_nil
+          @ev.code = 1
+          @bt.resolve(@ev, []).should be_nil
         end
       end
-      context "with input as super set of binded keys" do
+      context "with pressed keys as super set of binded keys" do
         it "should return Arrays" do
-          @bt.resolve([1,2,4,5,0]).should == [6]
-          @bt.resolve([1,4,5,10,0]).should == [55]
+          @bt.resolve(@ev, [1,2,4,5]).should == [6]
+          @bt.resolve(@ev, [1,4,5,10]).should == [55]
         end
       end
     end
