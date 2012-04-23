@@ -114,11 +114,9 @@ module Rbindkeys
     def resolve event
       event.code = (@pre_key_binds[event.code] or event.code)
 
-      input = @pressed_keys.clone
-      input.sort!
-      input.push event.code
-      r = @key_binds.resolve input
-      p r
+      pressed = @pressed_keys.clone
+      pressed.sort!
+      r = @key_binds.resolve event, pressed
       if r.nil?
         true
       elsif r.kind_of? Array

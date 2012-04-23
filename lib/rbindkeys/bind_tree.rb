@@ -7,8 +7,12 @@ module Rbindkeys
     # leaves are Array of Fixnum(keycode)
     attr_reader :tree
 
+    # active bind array
+    attr_reader :pressing_binds
+
     def initialize
       @tree = {}
+      @pressing_binds = []
     end
 
     # register an input-output pair
@@ -37,15 +41,20 @@ module Rbindkeys
       subtree[tail_code] = output
     end
 
-    def resolve input
-      input = input.clone
-      tail_code = input.pop
+    def resolve event, pressed_keys
+    end
 
+    # called when event.value == 0
+    def resolve_for_release_event
+    end
+
+    # called when event.value == 1
+    def resolve_for_pressed_event event, pressed_keys
       subtree = @tree
       last_code = -1
-      input.each do |code|
+      pressed_keys.each do |code|
         if last_code >= code
-          raise ArgumentError, "expect a sorted Array as input"
+          raise ArgumentError, "expect a sorted Array for 2nd arg (pressed_keys)"
         end
         last_code = code
 
@@ -54,15 +63,20 @@ module Rbindkeys
         end
       end
 
-      subtree = (subtree and subtree[tail_code])
+      subtree = (subtree.kind_of?(Hash) and subtree[event.code])
 
-      if subtree.nil? or subtree.kind_of? Hash
+      if not subtree or subtree.kind_of? Hash
         return nil
       elsif subtree.kind_of? Array
+        @pressing_binds << []
         return subtree
       else
         raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"
       end
+    end
+
+    # called when event.value == 2
+    def resolve_for_pressing_event
     end
 
     class UnexpecedLeafError < RuntimeError; end
