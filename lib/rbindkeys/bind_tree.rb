@@ -38,9 +38,6 @@ module Rbindkeys
       subtree[tail_code] = KeyBind.new input.push(tail_code), output
     end
 
-    def resolve event, pressed_keys
-    end
-
     # called when event.value == 0
     def resolve_for_released_event event, pressed_keys
       release_binds = []
@@ -83,7 +80,8 @@ module Rbindkeys
     end
 
     # called when event.value == 2
-    def resolve_for_pressing_event
+    def resolve_for_pressing_event event, pressed_keys
+      @pressing_binds
     end
 
     class UnexpecedLeafError < RuntimeError; end

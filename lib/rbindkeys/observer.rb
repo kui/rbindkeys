@@ -81,7 +81,7 @@ module Rbindkeys
 
     def destroy *args
       begin
-        puts "try virtural.destroy" if @verbose
+        puts "try device.ungrab" if @verbose
         @device.ungrab
         puts "success" if @verbose
       rescue => e
@@ -114,27 +114,60 @@ module Rbindkeys
     def resolve event
       event.code = (@pre_key_binds[event.code] or event.code)
 
-      pressed = @pressed_keys.clone
-      pressed.sort!
-      r = @key_binds.resolve event, pressed
-      if r.nil?
-        true
-      elsif r.kind_of? Array
-        convert_virtual_pressed_keys event, input, r
+      @pressed_keys.sort!
+
+      case event.value
+      when 0
+        resolve_for_pressed event
+      when 1
+        resolve_for_released event
+      when 2
+        resolve_for_pressing event
       else
-        STDERR.puts "ERROR: unexpected bind #{r.inspect}"
+        raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
       end
     end
 
-    def convert_virtual_pressed_keys event, orig_codes, dest_codes
-      state = event.value
-      orig_codes.each do |code|
-        send_key code, (state ^ 1)
+    def resolve_for_pressed event
+      r = @key_binds.resolve_for_pressed_event event, @pressed_keys
+      if r.nil?
+        true
+      elsif r.kind_of? KeyBind
+        r.input.delete_if{|c|c==event.code}.each {|c| release_key c}
+        r.output.each {|c| press_key c}
+        false
+      else
+        raise RuntimeError, "expect nil or KeyBind"
       end
-      dest_codes.each do |code|
-        send_key code, state
+    end
+
+    def resolve_for_released event
+      r = @key_binds.resolve_for_released_event event, @pressed_keys
+      if r.kind_of? Array
+        if r.empty?
+          true
+        else
+          r.output.each {|c| release_key c}
+          r.input.delete_if{|c|c==event.code}.each{|c|press_key c}
+          false
+        end
+      else
+        raise RuntimeError, "expect Array of KeyBind"
       end
-      false
+    end
+
+    def resolve_for_pressing event
+      r = @key_binds.resolve_for_pressing_event event, @pressed_keys
+      if r.kind_of? Array
+        if r.empty?
+          true
+        else
+          r.output.each {|c| pressing_key c}
+          false
+        end
+      else
+        raise RuntimeError, "expect Array of KeyBind"
+      end
     end
 
     # send a press key event
@@ -145,6 +178,11 @@ module Rbindkeys
     # send a release key event
     def release_key code
       send_key code, 0
+    end
+
+    # send a press key event
+    def pressing_key code
+      send_key code, 2
     end
 
     # send a key event
@@ -230,6 +268,7 @@ module Rbindkeys
 
     # /for config
 
+    class UnknownKeyValueError < RuntimeError; end
   end
 
 end # of module Rbindkeys
