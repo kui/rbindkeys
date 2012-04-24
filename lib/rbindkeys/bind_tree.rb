@@ -45,7 +45,7 @@ module Rbindkeys
     end
 
     # called when event.value == 0
-    def resolve_for_release_event
+    def resolve_for_release_event event, pressed_keys
     end
 
     # called when event.value == 1
@@ -68,7 +68,7 @@ module Rbindkeys
       if not subtree or subtree.kind_of? Hash
         return nil
       elsif subtree.kind_of? Array
-        @pressing_binds << []
+        @pressing_binds << pressed_keys.clone.push(event.code)
         return subtree
       else
         raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"

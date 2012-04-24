@@ -29,11 +29,16 @@ describe BindTree do
         end
       end
       context "with binded pressed keys" do
-        it "should return Arrays" do
+        it "should return Arrays and pressing_binds added" do
           @ev.code = 0
           @bt.resolve_for_pressed_event(@ev, [1,2]).should == [6]
+          expected_pressing_binds = [[1, 2, @ev.code]]
+          @bt.pressing_binds.should == expected_pressing_binds
+
           @ev.code = 2
           @bt.resolve_for_pressed_event(@ev, []).should == [2]
+          expected_pressing_binds << [@ev.code]
+          @bt.pressing_binds.should == expected_pressing_binds
         end
       end
       context "with no binded pressed keys" do
