@@ -18,7 +18,7 @@ module Rbindkeys
     # register an input-output pair
     # _input_: Array of input keycodes
     # _output_: Array of send keycodes or Proc
-    def bind input, output
+    def bind input, output=nil
       input = input.clone
       tail_code = input.pop
       input.sort!
@@ -43,6 +43,16 @@ module Rbindkeys
 
     # called when event.value == 0
     def resolve_for_released_event event, pressed_keys
+      release_binds = []
+      @pressing_binds.reject! do |key_bind|
+        if key_bind.input.include? event.code
+          release_binds << key_bind
+          true
+        else
+          false
+        end
+      end
+      return release_binds
     end
 
     # called when event.value == 1
