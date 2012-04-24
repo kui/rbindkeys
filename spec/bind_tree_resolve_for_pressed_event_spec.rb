@@ -22,7 +22,7 @@ describe BindTree do
       context "with unsorted pressed keys" do
         it "should rase" do
           begin
-            @bt.resolve_for_pressed_event(@ev, [2, 1]).should
+            @bt.resolve_for_pressed_event(@ev, [2, 1])
             violated "should raise"
           rescue => e
           end
@@ -31,14 +31,14 @@ describe BindTree do
       context "with binded pressed keys" do
         it "should return Arrays and pressing_binds added" do
           @ev.code = 0
-          @bt.resolve_for_pressed_event(@ev, [1,2]).should == [6]
-          expected_pressing_binds = [[1, 2, @ev.code]]
-          @bt.pressing_binds.should == expected_pressing_binds
+          @bt.resolve_for_pressed_event(@ev, [1,2]).output.should == [6]
+          expected_pressing_binds = [1, 2, @ev.code]
+          @bt.pressing_binds[0].input.should == expected_pressing_binds
 
           @ev.code = 2
-          @bt.resolve_for_pressed_event(@ev, []).should == [2]
-          expected_pressing_binds << [@ev.code]
-          @bt.pressing_binds.should == expected_pressing_binds
+          @bt.resolve_for_pressed_event(@ev, []).output.should == [2]
+          expected_pressing_binds = [@ev.code]
+          @bt.pressing_binds[1].input.should == expected_pressing_binds
         end
       end
       context "with no binded pressed keys" do
@@ -53,8 +53,8 @@ describe BindTree do
       context "with pressed keys as super set of binded keys" do
         it "should return Arrays" do
           @ev.code = 0
-          @bt.resolve_for_pressed_event(@ev, [1,2,4,5]).should == [6]
-          @bt.resolve_for_pressed_event(@ev, [1,4,5,10]).should == [55]
+          @bt.resolve_for_pressed_event(@ev, [1,2,4,5]).output.should == [6]
+          @bt.resolve_for_pressed_event(@ev, [1,4,5,10]).output.should == [55]
         end
       end
     end

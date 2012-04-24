@@ -21,24 +21,21 @@ module Rbindkeys
     def bind input, output
       input = input.clone
       tail_code = input.pop
+      input.sort!
 
       subtree = @tree
-      last_code = -1
       input.each do |code|
         if subtree.has_key? code and (not subtree[code].kind_of? Hash)
           raise DuplicateNodeError, "already register an input:#{input}"
-        elsif last_code >= code
-          raise ArgumentError, "expect a sorted Array as input"
         end
         subtree[code] ||= {}
         subtree = subtree[code]
-        last_code = code
       end
 
       if subtree.has_key? tail_code
         raise DuplicateNodeError, "already register an input:#{input}"
       end
-      subtree[tail_code] = output
+      subtree[tail_code] = KeyBind.new input.push(tail_code), output
     end
 
     def resolve event, pressed_keys
@@ -67,8 +64,8 @@ module Rbindkeys
 
       if not subtree or subtree.kind_of? Hash
         return nil
-      elsif subtree.kind_of? Array
-        @pressing_binds << pressed_keys.clone.push(event.code)
+      elsif subtree.kind_of? KeyBind
+        @pressing_binds << subtree
         return subtree
       else
         raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"

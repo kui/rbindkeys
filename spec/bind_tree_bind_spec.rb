@@ -18,7 +18,9 @@ describe BindTree do
           input.should == [1,2] # should not destroyable
           @bt.bind [1,0], [2,3]
           @bt.bind [2], [2,4]
-          @bt.tree.should == {1=>{2=>[2,3],0=>[2,3]}, 2=>[2,4]}
+          @bt.tree[1][2].output.should == [2,3]
+          @bt.tree[1][0].output.should == [2,3]
+          @bt.tree[2].output.should == [2,4]
         end
       end
       context 'with duplicate node input' do
@@ -38,16 +40,6 @@ describe BindTree do
             violated "should raise"
           rescue => e
             e.class.should == BindTree::DuplicateNodeError
-          end
-        end
-      end
-      context "with unsorted input" do
-        it "should raise ArgumentError" do
-          begin
-            @bt.bind [3,2,6], [2,4]
-            violated "should raise"
-          rescue => e
-            e.class.should == ArgumentError
           end
         end
       end
