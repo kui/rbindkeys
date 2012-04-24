@@ -115,12 +115,13 @@ module Rbindkeys
       event.code = (@pre_key_binds[event.code] or event.code)
 
       @pressed_keys.sort!
+      p @pressed_keys
 
       case event.value
       when 0
-        resolve_for_pressed event
-      when 1
         resolve_for_released event
+      when 1
+        resolve_for_pressed event
       when 2
         resolve_for_pressing event
       else
@@ -133,7 +134,8 @@ module Rbindkeys
       if r.nil?
         true
       elsif r.kind_of? KeyBind
-        r.input.delete_if{|c|c==event.code}.each {|c| release_key c}
+        p r
+        r.input.clone.delete_if{|c|c==event.code}.each {|c| release_key c}
         r.output.each {|c| press_key c}
         false
       else
@@ -147,8 +149,11 @@ module Rbindkeys
         if r.empty?
           true
         else
-          r.output.each {|c| release_key c}
-          r.input.delete_if{|c|c==event.code}.each{|c|press_key c}
+          p r
+          r.each do |kb|
+            kb.output.each {|c| release_key c}
+            kb.input.clone.delete_if{|c|c==event.code}.each{|c|press_key c}
+          end
           false
         end
       else
@@ -162,7 +167,8 @@ module Rbindkeys
         if r.empty?
           true
         else
-          r.output.each {|c| pressing_key c}
+          p r
+          r.each {|kb| kb.output.each {|c| pressing_key c}}
           false
         end
       else
