@@ -1,0 +1,12 @@
+# -*- coding:utf-8; mode:ruby; -*-
+
+require 'rbindkeys'
+
+include Rbindkeys
+
+describe BindTree do
+  context "normal" do
+    describe 'BindTree#bind' do
+    end
+  end
+end

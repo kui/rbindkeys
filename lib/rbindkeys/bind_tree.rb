@@ -42,7 +42,7 @@ module Rbindkeys
     end
 
     # called when event.value == 0
-    def resolve_for_release_event event, pressed_keys
+    def resolve_for_released_event event, pressed_keys
     end
 
     # called when event.value == 1
