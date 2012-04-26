@@ -191,11 +191,13 @@ module Rbindkeys
     # send a key event
     def send_key code, state
       code = parse_code code
-      ie = InputEvent.new nil, EV_KEY, code, state
-      @virtual.write_input_event ie
+      @key_ev ||= InputEvent.new nil, EV_KEY, code, state
+      @key_ev.code = code
+      @key_ev.value = state
+      @virtual.write_input_event @key_ev
       if @verbose
-        s = ie.value == 0 ? 'released' : ie.value == 1 ? 'pressed' : 'pressing'
-        puts "write\t#{ie.hr_code}(#{ie.code}):#{s}"
+        s = @key_ev.value == 0 ? 'released' : @key_ev.value == 1 ? 'pressed' : 'pressing'
+        puts "write\t#{@key_ev.hr_code}(#{@key_ev.code}):#{s}"
       end
     end
 
