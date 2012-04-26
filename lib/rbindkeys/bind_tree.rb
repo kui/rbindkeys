@@ -7,12 +7,12 @@ module Rbindkeys
     # leaves are Array of Fixnum(keycode)
     attr_reader :tree
 
-    # active bind array
-    attr_reader :pressing_binds
+    # active binds or bindtree
+    attr_reader :active_leaves
 
     def initialize
       @tree = {}
-      @pressing_binds = []
+      @active_leaves = []
     end
 
     # register an input-output pair
@@ -41,7 +41,7 @@ module Rbindkeys
     # called when event.value == 0
     def resolve_for_released_event event, pressed_keys
       release_binds = []
-      @pressing_binds.reject! do |key_bind|
+      @active_leaves.reject! do |key_bind|
         if key_bind.input.include? event.code
           release_binds << key_bind
           true
@@ -72,7 +72,7 @@ module Rbindkeys
       if not subtree or subtree.kind_of? Hash
         return nil
       elsif subtree.kind_of? KeyBind
-        @pressing_binds << subtree
+        @active_leaves << subtree
         return subtree
       else
         raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"
@@ -81,7 +81,7 @@ module Rbindkeys
 
     # called when event.value == 2
     def resolve_for_pressing_event event, pressed_keys
-      @pressing_binds
+      @active_leaves
     end
 
     class Leaf

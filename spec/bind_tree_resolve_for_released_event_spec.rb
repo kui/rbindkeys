@@ -20,9 +20,9 @@ describe BindTree do
         @ev = Revdev::InputEvent.new nil, Revdev::EV_KEY, 0, 0
       end
       it "'s pressed_binds should have empty" do
-        @bt.pressing_binds.should be_empty
+        @bt.active_leaves.should be_empty
         @bt.resolve_for_pressed_event @ev, []
-        @bt.pressing_binds.should be_empty
+        @bt.active_leaves.should be_empty
       end
     end
     context "a pressed bind" do
@@ -32,10 +32,10 @@ describe BindTree do
         @ev = Revdev::InputEvent.new nil, Revdev::EV_KEY, 0, 0
       end
       it "'s pressed_binds should empty" do
-        exp = @bt.pressing_binds
-        @bt.pressing_binds.size.should == 1
+        exp = @bt.active_leaves
+        @bt.active_leaves.size.should == 1
         @bt.resolve_for_released_event(@ev, [])[0].output.should == [6]
-        @bt.pressing_binds.should be_empty
+        @bt.active_leaves.should be_empty
       end
     end
     context "two pressed binds" do
@@ -47,17 +47,17 @@ describe BindTree do
         @ev = Revdev::InputEvent.new nil, Revdev::EV_KEY, 0, 0
       end
       it "'s pressed_binds should decrease" do
-        @bt.pressing_binds.length.should == 2
+        @bt.active_leaves.length.should == 2
         @bt.resolve_for_released_event(@ev, [])
-        @bt.pressing_binds.length.should == 1
+        @bt.active_leaves.length.should == 1
         @ev.code = 3
         @bt.resolve_for_released_event(@ev, [])
-        @bt.pressing_binds.should be_empty
+        @bt.active_leaves.should be_empty
       end
       it "'s pressed_binds should empty" do
         @ev.code = 1
         @bt.resolve_for_released_event(@ev, []).length.should == 2
-        @bt.pressing_binds.should be_empty
+        @bt.active_leaves.should be_empty
       end
     end
   end
