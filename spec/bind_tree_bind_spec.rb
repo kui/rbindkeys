@@ -18,9 +18,9 @@ describe BindTree do
           input.should == [1,2] # should not destroyable
           @bt.bind [1,0], [2,3]
           @bt.bind [2], [2,4]
-          @bt.tree[1][2].output.should == [2,3]
-          @bt.tree[1][0].output.should == [2,3]
-          @bt.tree[2].output.should == [2,4]
+          @bt.tree[1][2].payload.output.should == [2,3]
+          @bt.tree[1][0].payload.output.should == [2,3]
+          @bt.tree[2].payload.output.should == [2,4]
         end
       end
       context 'with duplicate node input' do

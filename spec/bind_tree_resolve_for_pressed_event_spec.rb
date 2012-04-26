@@ -33,12 +33,12 @@ describe BindTree do
           @ev.code = 0
           @bt.resolve_for_pressed_event(@ev, [1,2]).output.should == [6]
           expected_pressing_binds = [1, 2, @ev.code]
-          @bt.active_leaves[0].input.should == expected_pressing_binds
+          @bt.active_binds[0].input.should == expected_pressing_binds
 
           @ev.code = 2
           @bt.resolve_for_pressed_event(@ev, []).output.should == [2]
           expected_pressing_binds = [@ev.code]
-          @bt.active_leaves[1].input.should == expected_pressing_binds
+          @bt.active_binds[1].input.should == expected_pressing_binds
         end
       end
       context "with no binded pressed keys" do

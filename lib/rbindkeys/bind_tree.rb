@@ -35,13 +35,14 @@ module Rbindkeys
       if subtree.has_key? tail_code
         raise DuplicateNodeError, "already register an input:#{input}"
       end
-      subtree[tail_code] = KeyBind.new input.push(tail_code), output
+      subtree[tail_code] = Leaf.new KeyBind.new input.push(tail_code), output
     end
 
     # called when event.value == 0
     def resolve_for_released_event event, pressed_keys
       release_binds = []
       @active_leaves.reject! do |key_bind|
+        key_bind = key_bind.payload
         if key_bind.input.include? event.code
           release_binds << key_bind
           true
@@ -71,9 +72,9 @@ module Rbindkeys
 
       if not subtree or subtree.kind_of? Hash
         return nil
-      elsif subtree.kind_of? KeyBind
+      elsif subtree.kind_of? Leaf
         @active_leaves << subtree
-        return subtree
+        return subtree.payload
       else
         raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"
       end
@@ -81,7 +82,15 @@ module Rbindkeys
 
     # called when event.value == 2
     def resolve_for_pressing_event event, pressed_keys
-      @active_leaves
+      @active_leaves.map{|l|l.payload}
+    end
+
+    def active_binds
+      @active_leaves.delete_if do |l|
+        not l.payload.kind_of? KeyBind
+      end.map do |l|
+        l.payload
+      end
     end
 
     class Leaf
