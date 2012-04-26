@@ -134,7 +134,6 @@ module Rbindkeys
       if r.nil?
         true
       elsif r.kind_of? KeyBind
-        p r
         r.input.clone.delete_if{|c|c==event.code}.each {|c| release_key c}
         r.output.each {|c| press_key c}
         false
@@ -149,7 +148,6 @@ module Rbindkeys
         if r.empty?
           true
         else
-          p r
           r.each do |kb|
             kb.output.each {|c| release_key c}
             kb.input.clone.delete_if{|c|c==event.code}.each{|c|press_key c}
@@ -167,7 +165,6 @@ module Rbindkeys
         if r.empty?
           true
         else
-          p r
           r.each {|kb| kb.output.each {|c| pressing_key c}}
           false
         end

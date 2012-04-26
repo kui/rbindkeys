@@ -84,6 +84,14 @@ module Rbindkeys
       @pressing_binds
     end
 
+    class Leaf
+      attr_reader :payload
+
+      def initialize payload
+        @payload = payload
+      end
+    end
+
     class UnexpecedLeafError < RuntimeError; end
     class DuplicateNodeError < ArgumentError; end
   end
