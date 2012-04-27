@@ -44,10 +44,10 @@ describe BindTree do
       context "with no binded pressed keys" do
         it "should return nil" do
           @ev.code = 4
-          @bt.resolve_for_pressed_event(@ev, []).should be_nil
-          @bt.resolve_for_pressed_event(@ev, [1]).should be_nil
+          @bt.resolve_for_pressed_event(@ev, []).should == @bt.default_value
+          @bt.resolve_for_pressed_event(@ev, [1]).should == @bt.default_value
           @ev.code = 1
-          @bt.resolve_for_pressed_event(@ev, []).should be_nil
+          @bt.resolve_for_pressed_event(@ev, []).should == @bt.default_value
         end
       end
       context "with pressed keys as super set of binded keys" do

@@ -21,7 +21,7 @@ describe BindTree do
       end
       it "'s pressed_binds should have empty" do
         @bt.active_key_binds.should be_empty
-        @bt.resolve_for_pressed_event @ev, []
+        @bt.resolve_for_pressed_event(@ev, []).should == @bt.default_value
         @bt.active_key_binds.should be_empty
       end
     end
@@ -32,7 +32,6 @@ describe BindTree do
         @ev = Revdev::InputEvent.new nil, Revdev::EV_KEY, 0, 0
       end
       it "'s pressed_binds should empty" do
-        exp = @bt.active_key_binds
         @bt.active_key_binds.size.should == 1
         @bt.resolve_for_released_event(@ev, [])[0].output.should == [6]
         @bt.active_key_binds.should be_empty

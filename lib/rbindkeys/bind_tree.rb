@@ -3,6 +3,9 @@
 module Rbindkeys
   class BindTree
 
+    DEFAULT_DEFAULT_VALUE = :through
+    AVAIVABLE_DEFAULT_VALUE = [:through, :ignore]
+
     # a tree structure which that nodes are Fixnum(keycode) and
     # leaves are Leaf
     attr_reader :tree
@@ -10,9 +13,17 @@ module Rbindkeys
     # active KeyBind
     attr_reader :active_key_binds
 
-    def initialize
+    # a value if no binds hit
+    attr_reader :default_value
+
+    def initialize default_value=DEFAULT_DEFAULT_VALUE
       @tree = {}
       @active_key_binds = []
+      if AVAIVABLE_DEFAULT_VALUE.include? default_value
+        @default_value = default_value
+      else
+        raise ArgumentError, "expect #{AVAIVABLE_DEFAULT_VALUE.join('/')}"
+      end
     end
 
     # register an input-output pair
@@ -49,7 +60,12 @@ module Rbindkeys
           false
         end
       end
-      return release_binds
+
+      if release_binds.empty?
+        @default_value
+      else
+        release_binds
+      end
     end
 
     # called when event.value == 1
@@ -70,7 +86,7 @@ module Rbindkeys
       subtree = (subtree.kind_of?(Hash) and subtree[event.code])
 
       if not subtree or subtree.kind_of? Hash
-        return nil
+        return @default_value
       elsif subtree.kind_of? Leaf and subtree.payload.kind_of? KeyBind
         @active_key_binds << subtree.payload
         return subtree.payload
@@ -81,7 +97,11 @@ module Rbindkeys
 
     # called when event.value == 2
     def resolve_for_pressing_event event, pressed_keys
-      @active_key_binds
+      if @active_key_binds.empty?
+        @default_value
+      else
+        @active_key_binds
+      end
     end
 
     class Leaf

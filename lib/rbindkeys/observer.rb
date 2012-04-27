@@ -53,15 +53,7 @@ module Rbindkeys
               s = event.value == 0 ? 'released' : event.value == 1 ? 'pressed' : 'pressing'
               puts "read\t#{event.hr_type}:#{event.hr_code}(#{event.code}):#{s}"
             end
-            if resolve(event) == true
-              if @verbose
-                s = event.value == 0 ? 'released' : event.value == 1 ? 'pressed' : 'pressing'
-                puts "write\t#{event.hr_type}:#{event.hr_code}(#{event.code}):#{s}"
-                puts
-              end
-              @virtual.write_input_event event
-            end
-
+            resolve event
             process_pressed_keys event
           end
         rescue => e
@@ -117,28 +109,31 @@ module Rbindkeys
       @pressed_keys.sort!
       p @pressed_keys
 
-      case event.value
-      when 0
-        resolve_for_released event
-      when 1
-        resolve_for_pressed event
-      when 2
-        resolve_for_pressing event
-      else
-        raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
+      result =
+        case event.value
+        when 0
+          resolve_for_released event
+        when 1
+          resolve_for_pressed event
+        when 2
+          resolve_for_pressing event
+        else
+          raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
+        end
+
+      if result  == :through
+        send_event event
       end
     end
 
     def resolve_for_pressed event
       r = @key_binds.resolve_for_pressed_event event, @pressed_keys
-      if r.nil?
-        true
-      elsif r.kind_of? KeyBind
+      if r.kind_of? KeyBind
         r.input.clone.delete_if{|c|c==event.code}.each {|c| release_key c}
         r.output.each {|c| press_key c}
         false
       else
-        raise RuntimeError, "expect nil or KeyBind"
+        r
       end
     end
 
@@ -146,7 +141,7 @@ module Rbindkeys
       r = @key_binds.resolve_for_released_event event, @pressed_keys
       if r.kind_of? Array
         if r.empty?
-          true
+          @key_binds.default_value
         else
           r.each do |kb|
             kb.output.each {|c| release_key c}
@@ -155,7 +150,7 @@ module Rbindkeys
           false
         end
       else
-        raise RuntimeError, "expect Array of KeyBind"
+        r
       end
     end
 
@@ -163,13 +158,13 @@ module Rbindkeys
       r = @key_binds.resolve_for_pressing_event event, @pressed_keys
       if r.kind_of? Array
         if r.empty?
-          true
+          @key_binds.default_value
         else
           r.each {|kb| kb.output.each {|c| pressing_key c}}
           false
         end
       else
-        raise RuntimeError, "expect Array of KeyBind"
+        r
       end
     end
 
@@ -194,11 +189,15 @@ module Rbindkeys
       @key_ev ||= InputEvent.new nil, EV_KEY, code, state
       @key_ev.code = code
       @key_ev.value = state
-      @virtual.write_input_event @key_ev
+      send_event @key_ev
+    end
+
+    def send_event ie
       if @verbose
-        s = @key_ev.value == 0 ? 'released' : @key_ev.value == 1 ? 'pressed' : 'pressing'
-        puts "write\t#{@key_ev.hr_code}(#{@key_ev.code}):#{s}"
+        s = ie.value == 0 ? 'released' : ie.value == 1 ? 'pressed' : 'pressing'
+        puts "write\t#{ie.hr_code}(#{ie.code}):#{s}\n\n"
       end
+      @virtual.write_input_event ie
     end
 
     # parse and normalize to Fixnum (Array)
