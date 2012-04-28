@@ -135,6 +135,8 @@ module Rbindkeys
       end
     end
 
+    # TODO fix bug: on Google Chrome, pressing C-fn invoke new window creation.
+    # (C-fn mean pressing the n key with pressing C-f)
     def resolve_for_pressed event
       r = @key_binds.resolve_for_pressed_event event, @pressed_keys
       if r.kind_of? KeyBind

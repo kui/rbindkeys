@@ -13,6 +13,8 @@ module Rbindkeys
     attr_reader :main_tree
 
     # active KeyBind
+    # TODO create KeyEventHandler which exist between Observer and BindTree
+    # TODO move out @active_key_binds to KeyEventHandler
     attr_reader :active_key_binds
 
     # a value if no binds hit
