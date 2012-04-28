@@ -1,8 +1,14 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
+## settings
+@swap_ctrl_with_caps = true
 
-pre_bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
-pre_bind_key KEY_LEFTCTRL, KEY_CAPSLOCK
+##
+
+if @swap_ctrl_with_caps
+  pre_bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
+  pre_bind_key KEY_LEFTCTRL, KEY_CAPSLOCK
+end
 
 bind_key [KEY_LEFTCTRL, KEY_F], KEY_RIGHT
 bind_key [KEY_LEFTCTRL, KEY_B], KEY_LEFT
