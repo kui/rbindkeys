@@ -19,8 +19,7 @@ module Rbindkeys
     attr_reader :default_value
 
     def initialize default_value=DEFAULT_DEFAULT_VALUE
-      @main_tree = {}
-      @tree = @main_tree
+      @tree = {}
       @active_key_binds = []
       if AVAIVABLE_DEFAULT_VALUE.include? default_value
         @default_value = default_value
@@ -30,14 +29,21 @@ module Rbindkeys
     end
 
     # register an input-output pair
-    # _input_: Array of input keycodes
+    # _input_: Array of (Array of) input keycodes
     # _output_: Array of send keycodes or Proc
     def bind input, output=nil
       input = input.clone
+      new_input = []
+
+      if input.kind_of? Array and input[0].kind_of? Array
+        new_input = input
+        input = new_input.shift
+      end
+
       tail_code = input.pop
       input.sort!
 
-      subtree = @main_tree
+      subtree = @tree
       input.each do |code|
         if subtree.has_key? code and (not subtree[code].kind_of? Hash)
           raise DuplicateNodeError, "already register an input:#{input}"
@@ -46,10 +52,26 @@ module Rbindkeys
         subtree = subtree[code]
       end
 
-      if subtree.has_key? tail_code
+      if not new_input.empty?
+        if subtree.has_key?(tail_code) and
+            not (subtree[tail_code].kind_of?(Leaf) and
+                 subtree[tail_code].payload.kind_of?(BindTree))
+          raise DuplicateNodeError, "already register an input:#{input}"
+        end
+
+        if new_input.length == 1
+          new_input = new_input.first
+        end
+
+        subtree[tail_code] ||= Leaf.new BindTree.new :ignore
+        subtree[tail_code].payload.bind new_input, output
+
+      elsif subtree.has_key? tail_code
         raise DuplicateNodeError, "already register an input:#{input}"
+
+      else
+        subtree[tail_code] = Leaf.new KeyBind.new input.push(tail_code), output
       end
-      subtree[tail_code] = Leaf.new KeyBind.new input.push(tail_code), output
     end
 
     # called when event.value == 0
@@ -96,6 +118,7 @@ module Rbindkeys
           return subtree.payload
         elsif subtree.payload.kind_of? BindTree
           # TODO implement
+          return subtree.payload
         end
       else
         raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"
