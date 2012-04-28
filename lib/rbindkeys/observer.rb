@@ -16,6 +16,9 @@ module Rbindkeys
     attr_reader :pre_key_binds
 
     # main key binds
+    attr_reader :main_key_binds
+
+    # now key binds (for 2 stroke keybinds)
     attr_reader :key_binds
 
     # pressed keys stored as sorted Array
@@ -32,7 +35,8 @@ module Rbindkeys
       @virtual = VirtualDevice.new
       @config_file = config_name
       @pressed_keys = []
-      @key_binds = BindTree.new
+      @main_key_binds = BindTree.new
+      @key_binds = @main_key_binds
       @pre_key_binds = {}
       @virtual_pressed_keys = []
       @verbose = true
@@ -137,6 +141,8 @@ module Rbindkeys
         r.input.clone.delete_if{|c|c==event.code}.each {|c| release_key c}
         r.output.each {|c| press_key c}
         false
+      elsif r.kind_of? BindTree
+        :ignore
       else
         r
       end

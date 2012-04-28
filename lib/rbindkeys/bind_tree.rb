@@ -87,7 +87,7 @@ module Rbindkeys
       end
 
       if release_binds.empty?
-        @default_value
+        :through
       else
         release_binds
       end
@@ -117,7 +117,6 @@ module Rbindkeys
           @active_key_binds << subtree.payload
           return subtree.payload
         elsif subtree.payload.kind_of? BindTree
-          # TODO implement
           return subtree.payload
         end
       else
