@@ -134,6 +134,7 @@ module Rbindkeys
     def resolve_for_pressed event
       r = @key_binds.resolve_for_pressed_event event, @pressed_keys
       if r.kind_of? KeyBind
+        p r
         r.input.clone.delete_if{|c|c==event.code}.each {|c| release_key c}
         r.output.each {|c| press_key c}
         false
@@ -216,7 +217,7 @@ module Rbindkeys
 
     # send a key event
     def send_key code, state
-      code = parse_code code
+      code = parse_code(code)[0] # TODO break parse_code and simplize
       @key_ev ||= InputEvent.new nil, EV_KEY, code, state
       @key_ev.code = code
       @key_ev.value = state
@@ -290,13 +291,15 @@ module Rbindkeys
 
     # /for config
 
-    # parse and normalize to Fixnum (Array)
+    # parse and normalize to Fixnum/Array
     def parse_code code, depth = 0
       if code.kind_of? Symbol
         code = Revdev.const_get code
       elsif code.kind_of? Array
         raise ArgumentError, "expect Array is the depth less than 2" if depth >= 2
         code.map!{|c| parse_code c, (depth+1)}
+      elsif code.kind_of? Fixnum and depth == 0
+        code = [code]
       elsif not code.kind_of? Fixnum
         raise ArgumentError, "expect Symbol / Fixnum / Array"
       end
