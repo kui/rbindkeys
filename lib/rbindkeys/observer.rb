@@ -53,16 +53,7 @@ module Rbindkeys
           if event.type != Revdev::EV_KEY
             @virtual.write_input_event event
           else
-            if @verbose
-              s = if event.value == 0 then 'released'
-                  elsif event.value == 1 then 'pressed'
-                  else 'pressing'
-                  end
-              puts "read\t#{event.hr_code}(#{event.code}):#{s}"
-            end
             resolve event
-            handle_pressed_keys event
-            puts if @verbose
           end
         rescue => e
           puts "#{e.class}: #{e.to_s}"
@@ -112,10 +103,18 @@ module Rbindkeys
     end
 
     def resolve event
+      if @verbose
+        s = if event.value == 0 then 'released'
+            elsif event.value == 1 then 'pressed'
+            else 'pressing'
+            end
+        puts "read\t#{event.hr_code}(#{event.code}):#{s}"
+      end
+
+      # handle pre_key_binds
       event.code = (@pre_key_binds[event.code] or event.code)
 
       @pressed_keys.sort!
-
       result =
         case event.value
         when 0; resolve_for_released event
@@ -125,7 +124,15 @@ module Rbindkeys
         end
 
       if result  == :through
+        fill_gap_pressed_state
         send_event event
+      end
+
+      handle_pressed_keys event
+
+      if @verbose
+        puts "pressed_keys real:#{@pressed_keys.inspect} virtual:#{@virtual_pressed_keys.inspect}"
+        puts
       end
     end
 
@@ -204,6 +211,12 @@ module Rbindkeys
       end
       handle_virtual_pressed_keys ie
       @virtual.write_input_event ie
+    end
+
+    def fill_gap_pressed_state
+      return if @virtual_pressed_keys == @pressed_keys
+      sub = @pressed_keys - @virtual_pressed_keys
+      sub.each {|code| press_key code}
     end
 
     def handle_virtual_pressed_keys ev
