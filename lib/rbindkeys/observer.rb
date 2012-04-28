@@ -104,11 +104,7 @@ module Rbindkeys
 
     def resolve event
       if @verbose
-        s = if event.value == 0 then 'released'
-            elsif event.value == 1 then 'pressed'
-            else 'pressing'
-            end
-        puts "read\t#{event.hr_code}(#{event.code}):#{s}"
+        puts "\nread\t#{get_state_by_value event}#{event.hr_code}(#{event.code})"
       end
 
       # handle pre_key_binds
@@ -132,7 +128,6 @@ module Rbindkeys
 
       if @verbose
         puts "pressed_keys real:#{@pressed_keys.inspect} virtual:#{@virtual_pressed_keys.inspect}"
-        puts
       end
     end
 
@@ -180,6 +175,30 @@ module Rbindkeys
       end
     end
 
+    def get_state_by_value ev
+      case ev.value
+      when 0; 'released '
+      when 1; 'pressed  '
+      when 2; 'pressing '
+      end
+    end
+
+    def fill_gap_pressed_state
+      return if @virtual_pressed_keys == @pressed_keys
+      sub = @pressed_keys - @virtual_pressed_keys
+      sub.each {|code| press_key code}
+    end
+
+    def handle_virtual_pressed_keys ev
+      return if ev.type != EV_KEY
+      case ev.value
+      when 0; @virtual_pressed_keys.delete ev.code
+      when 1; @virtual_pressed_keys << ev.code
+      when 2
+      else raise UnknownKeyValueError, "expect 0, 1 or 2 as ev.value(#{ev.value})"
+      end
+    end
+
     # send a press key event
     def press_key code
       send_key code, 1
@@ -205,28 +224,11 @@ module Rbindkeys
     end
 
     def send_event ie
-      if @verbose
-        s = ie.value == 0 ? 'released' : ie.value == 1 ? 'pressed' : 'pressing'
-        puts "write\t#{ie.hr_code}(#{ie.code}):#{s}"
+      if @verbose and ie.type == EV_KEY
+        puts "write\t#{get_state_by_value ie}#{ie.hr_code}(#{ie.code})"
       end
       handle_virtual_pressed_keys ie
       @virtual.write_input_event ie
-    end
-
-    def fill_gap_pressed_state
-      return if @virtual_pressed_keys == @pressed_keys
-      sub = @pressed_keys - @virtual_pressed_keys
-      sub.each {|code| press_key code}
-    end
-
-    def handle_virtual_pressed_keys ev
-      return if ev.type != EV_KEY
-      case ev.value
-      when 0; @virtual_pressed_keys.delete ev.code
-      when 1; @virtual_pressed_keys << ev.code
-      when 2
-      else raise UnknownKeyValueError, "expect 0, 1 or 2 as ev.value(#{ev.value})"
-      end
     end
 
     # parse and normalize to Fixnum (Array)
