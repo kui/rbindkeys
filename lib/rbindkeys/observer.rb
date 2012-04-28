@@ -231,19 +231,6 @@ module Rbindkeys
       @virtual.write_input_event ie
     end
 
-    # parse and normalize to Fixnum (Array)
-    def parse_code code, depth = 0
-      if code.kind_of? Symbol
-        code = Revdev.const_get code
-      elsif code.kind_of? Array
-        raise ArgumentError, "expect Array is the depth less than 2" if depth >= 2
-        code.map!{|c| parse_code c, (depth+1)}
-      elsif not code.kind_of? Fixnum
-        raise ArgumentError, "expect Symbol / Fixnum / Array"
-      end
-      code
-    end
-
     # switch on the LED of the keyboard
     def led_on code
       led code, 1
@@ -280,6 +267,8 @@ module Rbindkeys
         raise ArgumentError, "1st arg (#{input}) was already entried"
       end
 
+      puts "pre_bind_key #{input.inspect},\t#{output.inspect}" if @verbose
+
       @pre_key_binds[input] = output
     end
 
@@ -290,7 +279,7 @@ module Rbindkeys
       input = [input] if input.kind_of? Fixnum
       output = [output] if output.kind_of? Fixnum
 
-      puts "i:#{input.inspect}\to#{output.inspect}"
+      puts "bindkey #{input.inspect},\t#{output.inspect}" if @verbose
 
       @key_binds.bind input, output
     end
@@ -300,6 +289,19 @@ module Rbindkeys
     end
 
     # /for config
+
+    # parse and normalize to Fixnum (Array)
+    def parse_code code, depth = 0
+      if code.kind_of? Symbol
+        code = Revdev.const_get code
+      elsif code.kind_of? Array
+        raise ArgumentError, "expect Array is the depth less than 2" if depth >= 2
+        code.map!{|c| parse_code c, (depth+1)}
+      elsif not code.kind_of? Fixnum
+        raise ArgumentError, "expect Symbol / Fixnum / Array"
+      end
+      code
+    end
 
     class UnknownKeyValueError < RuntimeError; end
   end
