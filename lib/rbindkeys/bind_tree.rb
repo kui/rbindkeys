@@ -10,6 +10,8 @@ module Rbindkeys
     # leaves are Leaf
     attr_reader :tree
 
+    attr_reader :main_tree
+
     # active KeyBind
     attr_reader :active_key_binds
 
@@ -17,7 +19,8 @@ module Rbindkeys
     attr_reader :default_value
 
     def initialize default_value=DEFAULT_DEFAULT_VALUE
-      @tree = {}
+      @main_tree = {}
+      @tree = @main_tree
       @active_key_binds = []
       if AVAIVABLE_DEFAULT_VALUE.include? default_value
         @default_value = default_value
@@ -34,7 +37,7 @@ module Rbindkeys
       tail_code = input.pop
       input.sort!
 
-      subtree = @tree
+      subtree = @main_tree
       input.each do |code|
         if subtree.has_key? code and (not subtree[code].kind_of? Hash)
           raise DuplicateNodeError, "already register an input:#{input}"
@@ -87,9 +90,13 @@ module Rbindkeys
 
       if not subtree or subtree.kind_of? Hash
         return @default_value
-      elsif subtree.kind_of? Leaf and subtree.payload.kind_of? KeyBind
-        @active_key_binds << subtree.payload
-        return subtree.payload
+      elsif subtree.kind_of? Leaf
+        if subtree.payload.kind_of? KeyBind
+          @active_key_binds << subtree.payload
+          return subtree.payload
+        elsif subtree.payload.kind_of? BindTree
+          # TODO implement
+        end
       else
         raise UnexpecedLeafError, "unexpeced Leaf: #{subtree.inspect}"
       end
