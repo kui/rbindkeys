@@ -134,7 +134,6 @@ module Rbindkeys
     def resolve_for_pressed event
       r = @key_binds.resolve_for_pressed_event event, @pressed_keys
       if r.kind_of? KeyBind
-        p r
         r.input.clone.delete_if{|c|c==event.code}.each {|c| release_key c}
         r.output.each {|c| press_key c}
         false
