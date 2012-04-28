@@ -290,9 +290,7 @@ module Rbindkeys
       input = [input] if input.kind_of? Fixnum
       output = [output] if output.kind_of? Fixnum
 
-      last = input.pop
-      input.sort!
-      input.push last
+      puts "i:#{input.inspect}\to#{output.inspect}"
 
       @key_binds.bind input, output
     end
