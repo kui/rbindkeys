@@ -13,6 +13,7 @@ describe BindTree do
       @bt.bind [1,3], [5,6]
       @bt.bind [1,10,0], [55]
       @bt.bind [2], [2]
+      @bt.bind [[4],[5]], [6]
     end
 
     describe "BindTree#resolve_for_pressed_event" do
@@ -43,7 +44,7 @@ describe BindTree do
       end
       context "with no binded pressed keys" do
         it "should return nil" do
-          @ev.code = 4
+          @ev.code = 5
           @bt.resolve_for_pressed_event(@ev, []).should == @bt.default_value
           @bt.resolve_for_pressed_event(@ev, [1]).should == @bt.default_value
           @ev.code = 1
@@ -55,6 +56,17 @@ describe BindTree do
           @ev.code = 0
           @bt.resolve_for_pressed_event(@ev, [1,2,4,5]).output.should == [6]
           @bt.resolve_for_pressed_event(@ev, [1,4,5,10]).output.should == [55]
+        end
+      end
+      context "with 2 stroke keybind" do
+        it "should return Arrays" do
+          @ev.code = 4
+          tree = @bt.resolve_for_pressed_event(@ev, [])
+          tree.class.should == BindTree
+          p tree.tree
+
+          @ev.code = 5
+          tree.resolve_for_pressed_event(@ev, []).output.should == [6]
         end
       end
     end

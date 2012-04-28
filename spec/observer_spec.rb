@@ -32,7 +32,7 @@ describe Observer do
       context 'with Fixnum' do
         it "should return Fixnum" do
           num = 0
-          @observer.parse_code(num).should == num
+          @observer.parse_code(num).should == [num]
         end
       end
 
