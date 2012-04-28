@@ -21,6 +21,9 @@ module Rbindkeys
     # pressed keys stored as sorted Array
     attr_reader :pressed_keys
 
+    # pressed keys stored as sorted Array on the virtual device
+    attr_reader :virtual_pressed_keys
+
     # active bind
     attr_reader :active_bind
 
@@ -31,6 +34,7 @@ module Rbindkeys
       @pressed_keys = []
       @key_binds = BindTree.new
       @pre_key_binds = {}
+      @virtual_pressed_keys = []
       @verbose = true
     end
 
@@ -50,8 +54,11 @@ module Rbindkeys
             @virtual.write_input_event event
           else
             if @verbose
-              s = event.value == 0 ? 'released' : event.value == 1 ? 'pressed' : 'pressing'
-              puts "read\t#{event.hr_type}:#{event.hr_code}(#{event.code}):#{s}"
+              s = if event.value == 0 then 'released'
+                  elsif event.value == 1 then 'pressed'
+                  else 'pressing'
+                  end
+              puts "read\t#{event.hr_code}(#{event.code}):#{s}"
             end
             resolve event
             handle_pressed_keys event
@@ -108,18 +115,13 @@ module Rbindkeys
       event.code = (@pre_key_binds[event.code] or event.code)
 
       @pressed_keys.sort!
-      p @pressed_keys
 
       result =
         case event.value
-        when 0
-          resolve_for_released event
-        when 1
-          resolve_for_pressed event
-        when 2
-          resolve_for_pressing event
-        else
-          raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
+        when 0; resolve_for_released event
+        when 1; resolve_for_pressed event
+        when 2; resolve_for_pressing event
+        else raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
         end
 
       if result  == :through
@@ -200,7 +202,18 @@ module Rbindkeys
         s = ie.value == 0 ? 'released' : ie.value == 1 ? 'pressed' : 'pressing'
         puts "write\t#{ie.hr_code}(#{ie.code}):#{s}"
       end
+      handle_virtual_pressed_keys ie
       @virtual.write_input_event ie
+    end
+
+    def handle_virtual_pressed_keys ev
+      return if ev.type != EV_KEY
+      case ev.value
+      when 0; @virtual_pressed_keys.delete ev.code
+      when 1; @virtual_pressed_keys << ev.code
+      when 2
+      else raise UnknownKeyValueError, "expect 0, 1 or 2 as ev.value(#{ev.value})"
+      end
     end
 
     # parse and normalize to Fixnum (Array)
