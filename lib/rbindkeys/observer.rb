@@ -54,7 +54,8 @@ module Rbindkeys
               puts "read\t#{event.hr_type}:#{event.hr_code}(#{event.code}):#{s}"
             end
             resolve event
-            process_pressed_keys event
+            handle_pressed_keys event
+            puts if @verbose
           end
         rescue => e
           puts "#{e.class}: #{e.to_s}"
@@ -93,7 +94,7 @@ module Rbindkeys
       exit true
     end
 
-    def process_pressed_keys event
+    def handle_pressed_keys event
       if event.value == 1
         @pressed_keys << event.code
       elsif event.value == 0
@@ -197,7 +198,7 @@ module Rbindkeys
     def send_event ie
       if @verbose
         s = ie.value == 0 ? 'released' : ie.value == 1 ? 'pressed' : 'pressing'
-        puts "write\t#{ie.hr_code}(#{ie.code}):#{s}\n\n"
+        puts "write\t#{ie.hr_code}(#{ie.code}):#{s}"
       end
       @virtual.write_input_event ie
     end
