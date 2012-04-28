@@ -23,6 +23,10 @@ bind_key [KEY_LEFTCTRL, KEY_H], KEY_BACKSPACE
 bind_key [KEY_LEFTCTRL, KEY_M], KEY_ENTER
 bind_key [KEY_LEFTCTRL, KEY_I], KEY_TAB
 
+# binds related kill-ring
 bind_key [KEY_LEFTCTRL, KEY_W], [KEY_LEFTCTRL,KEY_X]
 bind_key [KEY_LEFTALT, KEY_W], [KEY_LEFTCTRL,KEY_C]
 bind_key [KEY_LEFTCTRL, KEY_Y], [KEY_LEFTCTRL,KEY_V]
+
+# 2 stroke binds
+bind_key [[KEY_LEFTCTRL, KEY_X], [KEY_K]], [KEY_LEFTCTRL,KEY_W]
