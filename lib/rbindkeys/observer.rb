@@ -145,7 +145,9 @@ module Rbindkeys
         else
           r.each do |kb|
             kb.output.each {|c| release_key c}
-            kb.input.clone.delete_if{|c|c==event.code}.each{|c|press_key c}
+            if kb.input_recovery
+              kb.input.clone.delete_if{|c|c==event.code}.each{|c|press_key c}
+            end
           end
           false
         end
