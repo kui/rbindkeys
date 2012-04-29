@@ -12,6 +12,9 @@ require "rbindkeys/key_event_handler"
 require "rbindkeys/bind_resolver"
 
 module Rbindkeys
+
+  DEFAULT_LOG_OUTPUT = STDIN
+
   class BindTree; end
   class Observer; end
   class Devicie; end
