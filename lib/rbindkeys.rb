@@ -2,6 +2,8 @@
 
 require "rubygems"
 require "rbindkeys/version"
+require "rbindkeys/log_utils"
+
 require "rbindkeys/key_bind"
 require "rbindkeys/bind_tree"
 require "rbindkeys/observer"
@@ -12,8 +14,6 @@ require "rbindkeys/key_event_handler"
 require "rbindkeys/bind_resolver"
 
 module Rbindkeys
-
-  DEFAULT_LOG_OUTPUT = STDIN
 
   class BindTree; end
   class Observer; end
