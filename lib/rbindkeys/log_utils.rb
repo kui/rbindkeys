@@ -6,7 +6,7 @@ module Rbindkeys
 
   class LogUtils
 
-    DEFAULT_LOG_OUTPUT = STDIN
+    DEFAULT_LOG_OUTPUT = STDOUT
 
     def LogUtils.get_logger progname
       logger = Logger.new DEFAULT_LOG_OUTPUT
