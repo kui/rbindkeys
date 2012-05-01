@@ -29,4 +29,8 @@ bind_key [KEY_LEFTALT, KEY_W], [KEY_LEFTCTRL,KEY_C]
 bind_key [KEY_LEFTCTRL, KEY_Y], [KEY_LEFTCTRL,KEY_V]
 
 # 2 stroke binds
-bind_key [[KEY_LEFTCTRL, KEY_X], [KEY_K]], [KEY_LEFTCTRL,KEY_W]
+bind_prefix_key [KEY_LEFTCTRL, KEY_X] do
+  bind_key [KEY_K], [KEY_LEFTCTRL, KEY_W]
+  bind_key [KEY_S], [KEY_LEFTCTRL, KEY_S]
+  bind_key [KEY_B], [KEY_LEFTCTRL, KEY_TAB]
+end
