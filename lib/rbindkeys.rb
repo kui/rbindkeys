@@ -22,4 +22,6 @@ module Rbindkeys
 
   class KeyEventHandler; end
   class BindResolver; end
+
+  class DuplicateNodeError < ArgumentError; end
 end
