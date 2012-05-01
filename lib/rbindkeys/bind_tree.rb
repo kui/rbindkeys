@@ -144,6 +144,5 @@ module Rbindkeys
     end
 
     class UnexpecedLeafError < RuntimeError; end
-    class DuplicateNodeError < ArgumentError; end
   end
 end
