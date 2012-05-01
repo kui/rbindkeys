@@ -22,7 +22,7 @@ describe KeyEventHandler do
     @vdev = mock(Rbindkeys::VirtualDevice)
   end
 
-  describe "#bind_prefix_key" do
+  describe "bind keys methods" do
     before do
       @defval = :hoge
       @bind_set = []
@@ -45,22 +45,42 @@ describe KeyEventHandler do
       @handler = KeyEventHandler.new @dev, @vdev
     end
 
-    context "add a new prefix key" do
-      it "construct @bind_set" do
-        @handler.bind_prefix_key [0,1] do
-          @handler.bind_key 2, 3
+    describe KeyEventHandler, "#pre_bind_key" do
+      context "with a bind" do
+        it "map the bind to @pre_bind_resolver" do
+          @handler.pre_bind_key 1, 0
+          @handler.pre_bind_resolver[1].should == 0
         end
-        @bind_set.length.should == 2
-        @bind_set.include?([[2],[3]]).should be_true
+      end
+      context "with duplicated binds" do
+        it "should raise a DuplicatedNodeError" do
+          @handler.pre_bind_key 1, 0
+          lambda{ @handler.pre_bind_key(1, 2) }.should raise_error(DuplicateNodeError)
+        end
       end
     end
-    context "add a existing prefix key" do
-      it "construct @bind_set" do
-        @handler.bind_prefix_key [0,10] do
-          @handler.bind_key 2, 3
+
+    describe KeyEventHandler, "#bind_key" do
+    end
+
+    describe KeyEventHandler, "#bind_prefix_key" do
+      context "with a new prefix key" do
+        it "construct @bind_set" do
+          @handler.bind_prefix_key [0,1] do
+            @handler.bind_key 2, 3
+          end
+          @bind_set.length.should == 2
+          @bind_set.include?([[2],[3]]).should be_true
         end
-        @bind_set.length.should == 1
-        @bind_set.include?([[2],[3]]).should be_true
+      end
+      context "with a existing prefix key" do
+        it "construct @bind_set" do
+          @handler.bind_prefix_key [0,10] do
+            @handler.bind_key 2, 3
+          end
+          @bind_set.length.should == 1
+          @bind_set.include?([[2],[3]]).should be_true
+        end
       end
     end
   end
