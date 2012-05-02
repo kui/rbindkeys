@@ -55,7 +55,7 @@ module Rbindkeys
         when 0; handle_release_event event
         when 1; handle_press_event event
         when 2; handle_pressing_event event
-        else raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
+        else raise UnknownKeyValue, "expect 0, 1 or 2 as event.value(#{event.value})"
         end
 
       if result  == :through

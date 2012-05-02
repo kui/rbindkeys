@@ -120,7 +120,7 @@ module Rbindkeys
         when 0; resolve_for_released event
         when 1; resolve_for_pressed event
         when 2; resolve_for_pressing event
-        else raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
+        else raise UnknownKeyValue, "expect 0, 1 or 2 as event.value(#{event.value})"
         end
 
       if result  == :through
@@ -203,7 +203,7 @@ module Rbindkeys
       when 0; @virtual_pressed_keys.delete ev.code
       when 1; @virtual_pressed_keys << ev.code
       when 2
-      else raise UnknownKeyValueError, "expect 0, 1 or 2 as ev.value(#{ev.value})"
+      else raise UnknownKeyValue, "expect 0, 1 or 2 as ev.value(#{ev.value})"
       end
     end
 
