@@ -70,8 +70,33 @@ module Rbindkeys
     end
 
     def handle_release_event event
+      release_bind_set = []
+      @active_bind_set.reject! do |key_bind|
+        if key_bind.input.include? event.code
+          release_bind_set << key_bind
+          true
+        else
+          false
+        end
+      end
+
+      p release_bind_set
+
+      if release_bind_set.empty?
+        @key_resolver.default_value
+      else
+        release_bind_set.each do |kb|
+          kb.output.each {|c|@operator.release_key c}
+          if kb.input_recovery
+            kb.input.clone.delete_if {|c|c==event.code}.each {|c|@operator.press_key c}
+          end
+        end
+        :ignore
+      end
     end
 
+    # TODO fix bug: on Google Chrome, pressing C-fn invoke new window creation.
+    # (C-fn mean pressing the n key with pressing C-f)
     def handle_press_event event
       r = @bind_resolver.resolve event, @pressed_key_set
       if r.kind_of? KeyBind
