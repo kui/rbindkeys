@@ -73,6 +73,18 @@ module Rbindkeys
     end
 
     def handle_press_event event
+      r = @bind_resolver.resolve event, @pressed_key_set
+      p r
+      if r.kind_of? KeyBind
+        r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
+        r.output.each {|c| @operator.press_key c}
+        :ignore
+      elsif r.kind_of? BindResolver
+        @bind_resolver = r
+        :ignore
+      else
+        r
+      end
     end
 
     def handle_pressing_event event
