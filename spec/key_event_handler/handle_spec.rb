@@ -73,11 +73,12 @@ describe KeyEventHandler do
         @resolver.should_receive(:resolve).and_return(@key_bind)
         @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
       end
-      it "should return :ignore and send messages to @ope" do
+      it "should return :ignore, send messages to @ope and update @active_bind_set" do
         @ope.should_receive(:press_key).with(2)
         @ope.should_receive(:press_key).with(3)
         @ope.should_receive(:release_key).with(0)
         @handler.handle_press_event(@event).should == :ignore
+        @handler.active_bind_set.should == [@key_bind]
       end
     end
     context "with an event which hit a BindResolver" do
@@ -99,6 +100,9 @@ describe KeyEventHandler do
         @handler.handle_press_event(@event).should == :foo
       end
     end
+  end
+
+  describe "#handle_release_event" do
   end
 
 end
