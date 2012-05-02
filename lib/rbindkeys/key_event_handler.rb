@@ -10,11 +10,8 @@ module Rbindkeys
 
     LOG = LogUtils.get_logger name
 
-    # event device to read events
-    attr_reader :device
-
-    # virtual device to write events
-    attr_reader :virtual
+    # device operator
+    attr_reader :operator
 
     # defaulut key bind set which retrive key binds with a key event
     attr_reader :default_bind_resolver
@@ -34,9 +31,8 @@ module Rbindkeys
     # pressed key binds
     attr_reader :active_bind_set
 
-    def initialize dev, virtual_dev
-      @device = dev
-      @virtual = virtual_dev
+    def initialize device_operator
+      @operator = device_operator
       @default_bind_resolver = BindResolver.new
       @bind_resolver = @default_bind_resolver
       @pre_bind_resolver = {}
@@ -48,6 +44,49 @@ module Rbindkeys
     def load_config file
       code = File.read file
       instance_eval code, file
+    end
+
+    def handle event
+      LOG.info "read\t#{KeyEventHandler.get_state_by_value event} "+
+        "#{event.hr_code}(#{event.code})" if LOG.info?
+
+      # handle pre_key_bind_set
+      event.code = (@pre_bind_resolver[event.code] or event.code)
+
+      result =
+        case event.value
+        when 0; handle_release_event event
+        when 1; handle_press_event event
+        when 2; handle_pressing_event event
+        else raise UnknownKeyValueError, "expect 0, 1 or 2 as event.value(#{event.value})"
+        end
+
+      if result  == :through
+        fill_gap_pressed_state
+        send_event event
+      end
+
+      handle_pressed_keys event
+
+      LOG.info "pressed_keys real:#{@pressed_key_set.inspect} "+
+        "virtual:#{@virtual_pressed_key_set.inspect}" if LOG.info?
+    end
+
+    def fill_gap_pressed_state
+      return if @virtual_pressed_keys == @pressed_keys
+      sub = @pressed_keys - @virtual_pressed_keys
+      sub.each {|code| press_key code}
+    end
+
+    def handle_pressed_keys event
+      if event.value == 1
+        @pressed_key_set << event.code
+        @pressed_key_set.sort! # TODO do not sort. implement an insertion like bubble
+      elsif event.value == 0
+        if @pressed_key_set.delete(event.code).nil?
+          LOG.warn "#{event.code} does not exists on @pressed_keys" if LOG.warn?
+        end
+      end
     end
 
     class << self
@@ -72,6 +111,14 @@ module Rbindkeys
           raise ArgumentError, "expect Symbol / Fixnum / Array"
         end
         Revdev.const_get sym
+      end
+
+      def get_state_by_value ev
+        case ev.value
+        when 0; 'released '
+        when 1; 'pressed  '
+        when 2; 'pressing '
+        end
       end
     end
 
