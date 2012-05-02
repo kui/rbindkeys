@@ -64,8 +64,8 @@ module Rbindkeys
     end
 
     def bind_key input, output, resolver=@bind_resolver
-      input = parse_code input
-      output = parse_code output
+      input = KeyEventHandler.parse_code input
+      output = KeyEventHandler.parse_code output
 
       LOG.info "bind_key #{input.inspect},\t#{output.inspect}\t#{resolver}"
 
@@ -77,7 +77,7 @@ module Rbindkeys
         raise ArgumentError, "expect to a block"
       end
 
-      input = parse_code input.clone
+      input = KeyEventHandler.parse_code input.clone
       tail_input = input.pop
 
       binded_resolver = @bind_resolver.resolve tail_input, input
@@ -92,27 +92,29 @@ module Rbindkeys
       binded_resolver
     end
 
-    # parse and normalize to Fixnum/Array
-    def parse_code code, depth = 0
-      if code.kind_of? Symbol
-        code = parse_symbol code
-      elsif code.kind_of? Array
-        raise ArgumentError, "expect Array is the depth less than 1" if depth >= 1
-        code.map!{|c| parse_code c, (depth+1)}
-      elsif code.kind_of? Fixnum and depth == 0
-        code = [code]
-      elsif not code.kind_of? Fixnum
-        raise ArgumentError, "expect Symbol / Fixnum / Array"
+    class << self
+      # parse and normalize to Fixnum/Array
+      def parse_code code, depth = 0
+        if code.kind_of? Symbol
+          code = parse_symbol code
+        elsif code.kind_of? Array
+          raise ArgumentError, "expect Array is the depth less than 1" if depth >= 1
+          code.map!{|c| parse_code c, (depth+1)}
+        elsif code.kind_of? Fixnum and depth == 0
+          code = [code]
+        elsif not code.kind_of? Fixnum
+          raise ArgumentError, "expect Symbol / Fixnum / Array"
+        end
+        code
       end
-      code
-    end
 
-    # TODO convert :j -> KEY_J, :ctrl -> KEY_LEFTCTRL
-    def parse_symbol sym
-      if not sym.kind_of? Symbol
-        raise ArgumentError, "expect Symbol / Fixnum / Array"
+      # TODO convert :j -> KEY_J, :ctrl -> KEY_LEFTCTRL
+      def parse_symbol sym
+        if not sym.kind_of? Symbol
+          raise ArgumentError, "expect Symbol / Fixnum / Array"
+        end
+        Revdev.const_get sym
       end
-      Revdev.const_get sym
     end
 
   end
