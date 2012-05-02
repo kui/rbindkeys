@@ -80,8 +80,6 @@ module Rbindkeys
         end
       end
 
-      p release_bind_set
-
       if release_bind_set.empty?
         @key_resolver.default_value
       else
@@ -113,6 +111,12 @@ module Rbindkeys
     end
 
     def handle_pressing_event event
+      if @active_bind_set.empty?
+        :through
+      else
+        @active_bind_set.each {|kb| kb.output.each {|c| @operator.pressing_key c}}
+        :ignore
+      end
     end
 
     def fill_gap_pressed_state
