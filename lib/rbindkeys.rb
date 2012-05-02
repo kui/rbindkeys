@@ -20,6 +20,7 @@ module Rbindkeys
   class Devicie; end
   class VirtualDevice; end
 
+  class DeviceOperator; end
   class KeyEventHandler; end
   class BindResolver; end
 

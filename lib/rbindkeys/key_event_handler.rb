@@ -19,14 +19,11 @@ module Rbindkeys
     # current key bind set which retrive key binds with a key event
     attr_reader :bind_resolver
 
-    #  proccessed resolver before bind_resolver
+    # proccessed resolver before bind_resolver
     attr_reader :pre_bind_resolver
 
     # code set of pressed key on the event device
     attr_reader :pressed_key_set
-
-    # code set of pressed keys on the virtual device
-    attr_reader :virtual_pressed_key_set
 
     # pressed key binds
     attr_reader :active_bind_set
@@ -37,7 +34,6 @@ module Rbindkeys
       @bind_resolver = @default_bind_resolver
       @pre_bind_resolver = {}
       @pressed_key_set = []
-      @virtual_pressed_key_set = []
       @active_bind_set = []
     end
 
@@ -53,6 +49,7 @@ module Rbindkeys
       # handle pre_key_bind_set
       event.code = (@pre_bind_resolver[event.code] or event.code)
 
+      # swich to handle event with event.value
       result =
         case event.value
         when 0; handle_release_event event
@@ -63,19 +60,28 @@ module Rbindkeys
 
       if result  == :through
         fill_gap_pressed_state
-        send_event event
+        @operator.send_event event
       end
 
       handle_pressed_keys event
 
       LOG.info "pressed_keys real:#{@pressed_key_set.inspect} "+
-        "virtual:#{@virtual_pressed_key_set.inspect}" if LOG.info?
+        "virtual:#{@operator.pressed_key_set.inspect}" if LOG.info?
+    end
+
+    def handle_release_event event
+    end
+
+    def handle_press_event event
+    end
+
+    def handle_pressing_event event
     end
 
     def fill_gap_pressed_state
-      return if @virtual_pressed_keys == @pressed_keys
-      sub = @pressed_keys - @virtual_pressed_keys
-      sub.each {|code| press_key code}
+      return if @operator.pressed_key_set == @pressed_key_set
+      sub = @pressed_key_set - @operator.pressed_key_set
+      sub.each {|code| @operator.press_key code}
     end
 
     def handle_pressed_keys event

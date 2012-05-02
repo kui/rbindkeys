@@ -18,8 +18,7 @@ describe KeyEventHandler do
   end
 
   before do
-    @dev = mock(Rbindkeys::Device)
-    @vdev = mock(Rbindkeys::VirtualDevice)
+    @ope = mock DeviceOperator
   end
 
   describe "bind keys methods" do
@@ -43,7 +42,7 @@ describe KeyEventHandler do
       end
       Rbindkeys::BindResolver.stub!(:new).and_return(@res)
 
-      @handler = KeyEventHandler.new @dev, @vdev
+      @handler = KeyEventHandler.new @ope
     end
 
     describe KeyEventHandler, "#pre_bind_key" do
