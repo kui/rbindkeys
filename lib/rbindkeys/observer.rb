@@ -313,7 +313,6 @@ module Rbindkeys
       code
     end
 
-    class UnknownKeyValueError < RuntimeError; end
   end
 
 end # of module Rbindkeys
