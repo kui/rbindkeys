@@ -137,4 +137,30 @@ describe KeyEventHandler do
     end
   end
 
+  describe "#handle_pressing_event" do
+    context "with an pressing event and empty @active_bind_set" do
+      it "should return :through" do
+        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 2
+        @handler.handle_pressing_event(@event).should == :through
+      end
+    end
+    context "with an pressing event and @active_bind_set which have length:1" do
+      before do
+        event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
+        @key_bind = KeyBind.new [0,1], [2,3]
+        @resolver.should_receive(:resolve).and_return(@key_bind)
+        @ope.should_receive(:press_key).with(2)
+        @ope.should_receive(:press_key).with(3)
+        @ope.should_receive(:release_key).with(0)
+        @handler.handle_press_event event
+      end
+      it "should return :ignore and send messages to @operator" do
+        @ope.should_receive(:pressing_key).with(2)
+        @ope.should_receive(:pressing_key).with(3)
+        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 2
+        @handler.handle_pressing_event(@event).should == :ignore
+      end
+    end
+  end
+
 end
