@@ -10,6 +10,7 @@ require "rbindkeys/observer"
 require "rbindkeys/device"
 require "rbindkeys/virtual_device"
 
+require "rbindkeys/device_operator"
 require "rbindkeys/key_event_handler"
 require "rbindkeys/bind_resolver"
 
