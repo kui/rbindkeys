@@ -26,5 +26,5 @@ module Rbindkeys
   class BindResolver; end
 
   class DuplicateNodeError < ArgumentError; end
-  class UnknownKeyValueError < RuntimeError; end
+  class UnknownKeyValue < Exception; end
 end
