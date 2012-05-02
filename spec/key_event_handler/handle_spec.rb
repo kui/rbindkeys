@@ -10,6 +10,10 @@ describe KeyEventHandler do
   before do
     @ope = mock DeviceOperator
     @ope.stub(:pressed_key_set){ [] }
+    @resolver = mock BindResolver
+    @resolver2 = BindResolver.new
+    BindResolver.stub!(:new){@resolver}
+
     @handler = KeyEventHandler.new @ope
   end
 
@@ -63,9 +67,6 @@ describe KeyEventHandler do
   end
 
   describe "#handle_press_event" do
-    before do
-      @resolver = mock BindResolver
-    end
     context "with an event which hit a key bind" do
       before do
         @key_bind = KeyBind.new [0,1], [2,3]
@@ -73,18 +74,29 @@ describe KeyEventHandler do
         @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
       end
       it "should return :ignore and send messages to @ope" do
-        @ope.should_receive(:press_key).with(2,3)
+        @ope.should_receive(:press_key).with(2)
+        @ope.should_receive(:press_key).with(3)
         @ope.should_receive(:release_key).with(0)
         @handler.handle_press_event(@event).should == :ignore
       end
     end
-    context "with an event which hit no key binds" do
+    context "with an event which hit a BindResolver" do
       before do
-        @resolver.should_receive(:resolve).and_return(@key_bind)
+        @resolver.should_receive(:resolve).and_return(@resolver2)
+        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
+      end
+      it "should return :ignore and update @bind_resolver" do
+        @handler.handle_press_event(@event).should == :ignore
+        @handler.bind_resolver.should == @resolver2
+      end
+    end
+    context "with an event which hit no one" do
+      before do
+        @resolver.should_receive(:resolve).and_return(:foo)
         @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
       end
       it "should return :through" do
-        @handler.handle_press_event(@event).should == :through
+        @handler.handle_press_event(@event).should == :foo
       end
     end
   end
