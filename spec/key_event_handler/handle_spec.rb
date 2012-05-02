@@ -111,7 +111,7 @@ describe KeyEventHandler do
       @ope.should_receive(:press_key).with(3)
       @ope.should_receive(:release_key).with(0)
       @handler.handle_press_event event
-      @resolve.stub(:default_value){:foo}
+      @resolve.stub(:default_value){:foo} # TODO raise warning when execute `rake`
     end
     context "with an event which can be found in @active_bind_set" do
       it "should return :ignore, update @active_bind_set and send messages to @ope" do
