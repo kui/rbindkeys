@@ -13,9 +13,6 @@ module Rbindkeys
     attr_reader :input_recovery
 
     def initialize input, output, opt = {}
-      raise ArgumentError, "input expected as Array" if not input.kind_of? Array
-      raise ArgumentError, "output expected as Array" if not output.kind_of? Array
-
       @input = input
       @output = output
       @input_recovery = opt[:input_recovery]
