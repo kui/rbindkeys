@@ -67,11 +67,13 @@ describe KeyEventHandler do
   end
 
   describe "#handle_press_event" do
+    before do
+      @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
+    end
     context "with an event which hit a key bind" do
       before do
         @key_bind = KeyBind.new [0,1], [2,3]
         @resolver.should_receive(:resolve).and_return(@key_bind)
-        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
       end
       it "should return :ignore, send messages to @ope and update @active_bind_set" do
         @ope.should_receive(:press_key).with(2)
@@ -84,7 +86,6 @@ describe KeyEventHandler do
     context "with an event which hit a BindResolver" do
       before do
         @resolver.should_receive(:resolve).and_return(@resolver2)
-        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
       end
       it "should return :ignore and update @bind_resolver" do
         @handler.handle_press_event(@event).should == :ignore
@@ -94,15 +95,46 @@ describe KeyEventHandler do
     context "with an event which hit no one" do
       before do
         @resolver.should_receive(:resolve).and_return(:foo)
-        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
       end
-      it "should return :through" do
+      it "should return :foo" do
         @handler.handle_press_event(@event).should == :foo
       end
     end
   end
 
   describe "#handle_release_event" do
+    before do
+      event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 1
+      @key_bind = KeyBind.new [0,1], [2,3]
+      @resolver.should_receive(:resolve).and_return(@key_bind)
+      @ope.should_receive(:press_key).with(2)
+      @ope.should_receive(:press_key).with(3)
+      @ope.should_receive(:release_key).with(0)
+      @handler.handle_press_event event
+      @resolve.stub(:default_value){:foo}
+    end
+    context "with an event which can be found in @active_bind_set" do
+      it "should return :ignore, update @active_bind_set and send messages to @ope" do
+        @ope.should_receive(:release_key).with(2)
+        @ope.should_receive(:release_key).with(3)
+        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 1, 0
+        @handler.handle_release_event(@event).should == :ignore
+        @handler.active_bind_set.empty?.should be_true
+      end
+      it "should return :ignore and update @active_bind_set" do
+        @ope.should_receive(:release_key).with(2)
+        @ope.should_receive(:release_key).with(3)
+        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 0, 0
+        @handler.handle_release_event(@event).should == :ignore
+        @handler.active_bind_set.empty?.should be_true
+      end
+    end
+    context "with an event which can not be found in @active_bind_set" do
+      it "should return @resolver.default_value" do
+        @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 10, 0
+        @handler.handle_release_event(@event).should == :foo
+      end
+    end
   end
 
 end
