@@ -34,7 +34,6 @@ describe DeviceOperator do
       end
       it "should send a #write_input_event to @vdev" do
         @vdev.should_receive(:write_input_event) do |ie|
-          p '---------------------------------'
           ie.code.should == @code
           10
         end
