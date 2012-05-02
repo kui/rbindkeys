@@ -18,25 +18,9 @@ describe DeviceOperator do
         @code = 10
         @value = 1
       end
-      it "should call #send_event and update @pressed_key_set" do
+      it "should call #send_event" do
         @operator.should_receive(:send_event).with(Revdev::EV_KEY,@code,@value)
         @operator.send_key @code, @value
-        @operator.pressed_key_set.should == [10]
-      end
-    end
-    context "with a code and a release value" do
-      before do
-        @code = 10
-        @value = 0
-
-        # press code:10
-        @operator.should_receive(:send_event).with(Revdev::EV_KEY,@code,1)
-        @operator.send_key @code, 1
-      end
-      it "should call #send_event and update @pressed_key_set" do
-        @operator.should_receive(:send_event).with(Revdev::EV_KEY,@code,@value)
-        @operator.send_key @code, @value
-        @operator.pressed_key_set.should == []
       end
     end
   end
