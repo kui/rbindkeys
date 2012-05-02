@@ -38,8 +38,8 @@ module Rbindkeys
       input = KeyEventHandler.parse_code input.clone
       tail_input = input.pop
 
-      binded_resolver = @bind_resolver.resolve tail_input, input
-      if binded_resolver == @bind_resolver.default_value
+      binded_resolver = resolver.resolve tail_input, input
+      if binded_resolver == resolver.default_value
         binded_resolver = BindResolver.new
         resolver.bind input, binded_resolver
       end
