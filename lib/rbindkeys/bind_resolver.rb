@@ -16,8 +16,14 @@ module Rbindkeys
     end
 
     def bind input, output
-      kb = KeyBind.new input, output
       @tree[input.last] ||= []
+      @tree[input.last].each do |b|
+        if b.input == input
+          raise DuplicateNodeError, "already this input(#{input.inspect}) was binded"
+        end
+      end
+
+      kb = KeyBind.new input, output
       @tree[input.last] << kb
       kb
     end
