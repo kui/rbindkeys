@@ -1,7 +1,6 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
 require 'rbindkeys'
-require 'fileutils'
 require 'revdev'
 
 include Rbindkeys
