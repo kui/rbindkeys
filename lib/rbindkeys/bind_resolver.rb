@@ -15,6 +15,12 @@ module Rbindkeys
       @default_value = default_value
     end
 
+    def bind input, output
+    end
+
+    def resolve key_code, key_code_set
+    end
+
   end
 
 end
