@@ -16,6 +16,10 @@ module Rbindkeys
     end
 
     def bind input, output
+      kb = KeyBind.new input, output
+      @tree[input.last] ||= []
+      @tree[input.last] << kb
+      kb
     end
 
     def resolve key_code, key_code_set
