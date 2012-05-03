@@ -85,11 +85,12 @@ describe KeyEventHandler do
     end
     context "with an event which hit a BindResolver" do
       before do
-        @resolver.should_receive(:resolve).and_return(@resolver2)
+        @key_bind = KeyBind.new [0,1], @resolver2
+        @resolver.should_receive(:resolve).and_return(@key_bind)
       end
       it "should return :ignore and update @bind_resolver" do
         @handler.handle_press_event(@event).should == :ignore
-        @handler.bind_resolver.should == @resolver2
+        @handler.bind_resolver.should == @key_bind
       end
     end
     context "with an event which hit no one" do
