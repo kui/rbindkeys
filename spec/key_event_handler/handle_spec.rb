@@ -92,6 +92,18 @@ describe KeyEventHandler do
         @handler.bind_resolver.should == @resolver2
       end
     end
+    context "with an event which hit a Proc" do
+      before do
+        @proc = proc {
+          :foo
+        }
+        @key_bind = KeyBind.new [0,1], @proc
+        @resolver.should_receive(:resolve).and_return(@key_bind)
+      end
+      it "should return :ignore and update @bind_resolver" do
+        @handler.handle_press_event(@event).should == :foo
+      end
+    end
     context "with an event which hit no one" do
       before do
         @resolver.should_receive(:resolve).and_return(:foo)
