@@ -74,6 +74,7 @@ describe BindResolver do
         @pressed_key_set = [0]
       end
       it "should return the bind" do
+        @resolver.resolve(@input, @pressed_key_set).kind_of?(KeyBind).should be_true
         @resolver.resolve(@input, @pressed_key_set).output.should == [2, 3]
       end
     end
@@ -83,7 +84,17 @@ describe BindResolver do
         @pressed_key_set = [0,1]
       end
       it "should return the bind" do
+        @resolver.resolve(@input, @pressed_key_set).kind_of?(KeyBind).should be_true
         @resolver.resolve(@input, @pressed_key_set).output.should == @resolver2
+      end
+    end
+    context "with an input which hit no binds" do
+      before do
+        @input = 2
+        @pressed_key_set = [1]
+      end
+      it "should return @default_value" do
+        @resolver.resolve(@input, @pressed_key_set).should == @resolver.default_value
       end
     end
   end
