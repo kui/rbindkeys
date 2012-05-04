@@ -33,3 +33,4 @@ TODO: Write usage instructions here
 * implement KeyEventHandler#bind_key's function ( `bind_key [KEY_FOO] { ... }` )
 * simplify config file ( `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
 * ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
+* notify when active a prefix key, changing ibus status, etc..
