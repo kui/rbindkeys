@@ -89,7 +89,7 @@ describe KeyEventHandler do
       end
       it "should return :ignore and update @bind_resolver" do
         @handler.handle_press_event(@event).should == :ignore
-        @handler.bind_resolver.should == @key_bind
+        @handler.bind_resolver.should == @resolver2
       end
     end
     context "with an event which hit no one" do
@@ -130,6 +130,9 @@ describe KeyEventHandler do
       end
     end
     context "with an event which can not be found in @active_bind_set" do
+      before do
+        @resolver.should_receive(:default_value).and_return(:foo)
+      end
       it "should return @resolver.default_value" do
         @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 10, 0
         @handler.handle_release_event(@event).should == :foo
