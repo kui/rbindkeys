@@ -45,14 +45,28 @@ describe BindResolver do
         lambda{@resolver.bind @input, [2,4]}.should raise_error(DuplicateNodeError)
       end
     end
+    context "with Fixnum Arrays" do
+      before do
+      end
+      it "should update @tree which store binds sort by modkey numbers" do
+        @resolver.bind [0,2], [0,3]
+        @resolver.bind [0,1,2], [1,3]
+        @resolver.bind [3,2], [2,3]
+
+        @resolver.tree[2][0].output.should == [1,3]
+        @resolver.tree[2][1].output.should == [0,3]
+        @resolver.tree[2][2].output.should == [2,3]
+      end
+    end
   end
 
   describe "#resolve" do
     before do
+      @resolver2 = BindResolver.new(:ignore)
       @resolver.bind [0, 1], [2, 3]
       @resolver.bind [3, 1], [2, 4]
       @resolver.bind [0, 2], [2, 5]
-      @resolver.bind [0, 1, 2], BindResolver.new(:ignore)
+      @resolver.bind [0, 1, 2], @resolver2
     end
     context "with an input which hit a bind" do
       before do
@@ -61,6 +75,15 @@ describe BindResolver do
       end
       it "should return the bind" do
         @resolver.resolve(@input, @pressed_key_set).output.should == [2, 3]
+      end
+    end
+    context "with an input which hit a BindResolver" do
+      before do
+        @input = 2
+        @pressed_key_set = [0,1]
+      end
+      it "should return the bind" do
+        @resolver.resolve(@input, @pressed_key_set).output.should == @resolver2
       end
     end
   end
