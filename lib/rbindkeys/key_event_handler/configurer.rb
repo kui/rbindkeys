@@ -22,14 +22,20 @@ module Rbindkeys
     end
 
     def bind_key input, output=nil, resolver=@bind_resolver, &block
-      input = KeyEventHandler.parse_code input
+      if input.kind_of?(Array) or input.kind_of?(Fixnum)
+        input = KeyEventHandler.parse_code input
+      else
+        raise ArgumentError, '1st arg expect Array / Fixnum'
+      end
       if block_given?
         output = block
       elsif output.nil?
         raise ArgumentError, 'expect 1 arg with a block / 2 args'
       elsif output.kind_of? BindResolver
-      else
+      elsif output.kind_of?(Array) or output.kind_of?(Fixnum)
         output = KeyEventHandler.parse_code output
+      else
+        raise ArgumentError, '2nd arg expect Array / Fixnum / BindResolver'
       end
 
       LOG.info "bind_key #{input.inspect},\t#{output.inspect}\t#{resolver}" if LOG.info?
