@@ -109,10 +109,13 @@ module Rbindkeys
           r.output.each {|c| @operator.press_key c}
           @active_bind_set << r
           @bind_resolver = @default_bind_resolver
+          :ignore
         elsif r.output.kind_of? BindResolver
           @bind_resolver = r.output
+          :ignore
+        elsif r.output.kind_of? Proc
+          r.output.call event, @operator
         end
-        :ignore
       else
         r
       end
