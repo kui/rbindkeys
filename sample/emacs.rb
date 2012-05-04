@@ -24,7 +24,7 @@ bind_key [KEY_LEFTCTRL, KEY_M], KEY_ENTER
 bind_key [KEY_LEFTCTRL, KEY_I], KEY_TAB
 bind_key [KEY_LEFTCTRL, KEY_LEFTBRACE], KEY_ESC
 
-# give a block
+# give a block sample
 @caps_led_state = 0
 bind_key KEY_CAPSLOCK do |event, operator|
   @caps_led_state = @caps_led_state ^ 1
@@ -37,9 +37,25 @@ bind_key [KEY_LEFTCTRL, KEY_W], [KEY_LEFTCTRL,KEY_X]
 bind_key [KEY_LEFTALT, KEY_W], [KEY_LEFTCTRL,KEY_C]
 bind_key [KEY_LEFTCTRL, KEY_Y], [KEY_LEFTCTRL,KEY_V]
 
+# kill line
+bind_key [KEY_LEFTCTRL, KEY_K] do |event, operator|
+  # select to end of line
+  operator.press_key KEY_LEFTSHIFT
+  operator.press_key KEY_END
+  operator.release_key KEY_END
+  operator.release_key KEY_LEFTSHIFT
+
+  # cut
+  operator.press_key KEY_LEFTCTRL
+  operator.press_key KEY_X
+  operator.release_key KEY_X
+  operator.release_key KEY_LEFTCTRL
+end
+
 # 2 stroke binds
 bind_prefix_key [KEY_LEFTCTRL, KEY_X] do
-  bind_key [KEY_K], [KEY_LEFTCTRL, KEY_W]
-  bind_key [KEY_S], [KEY_LEFTCTRL, KEY_S]
-  bind_key [KEY_B], [KEY_LEFTCTRL, KEY_TAB]
+  bind_key KEY_K, [KEY_LEFTCTRL, KEY_W]
+  bind_key KEY_S, [KEY_LEFTCTRL, KEY_S]
+  bind_key KEY_B, [KEY_LEFTCTRL, KEY_TAB]
+  bind_key KEY_G, []
 end
