@@ -40,6 +40,9 @@ describe KeyEventHandler do
           @defval
         end
       end
+      @res.stub(:kind_of?) do |klass|
+        klass == Rbindkeys::BindResolver
+      end
       Rbindkeys::BindResolver.stub!(:new).and_return(@res)
 
       @handler = KeyEventHandler.new @ope

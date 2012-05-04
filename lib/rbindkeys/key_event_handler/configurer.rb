@@ -21,9 +21,16 @@ module Rbindkeys
       [input, output]
     end
 
-    def bind_key input, output, resolver=@bind_resolver
+    def bind_key input, output=nil, resolver=@bind_resolver, &block
       input = KeyEventHandler.parse_code input
-      output = KeyEventHandler.parse_code output
+      if block_given?
+        output = block
+      elsif output.nil?
+        raise ArgumentError, 'expect 1 arg with a block / 2 args'
+      elsif output.kind_of? BindResolver
+      else
+        output = KeyEventHandler.parse_code output
+      end
 
       LOG.info "bind_key #{input.inspect},\t#{output.inspect}\t#{resolver}" if LOG.info?
 
