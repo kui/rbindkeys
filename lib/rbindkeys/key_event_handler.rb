@@ -63,7 +63,7 @@ module Rbindkeys
       LOG.debug "handle result: #{result}" if LOG.debug?
 
       if result  == :through
-        fill_gap_pressed_state
+        fill_gap_pressed_state event
         @operator.send_event event
       end
 
@@ -124,9 +124,12 @@ module Rbindkeys
       end
     end
 
-    def fill_gap_pressed_state
+    def fill_gap_pressed_state event
       return if @operator.pressed_key_set == @pressed_key_set
       sub = @pressed_key_set - @operator.pressed_key_set
+      if event.value == 0
+        sub.delete event.code
+      end
       sub.each {|code| @operator.press_key code}
     end
 
