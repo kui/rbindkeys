@@ -24,6 +24,14 @@ bind_key [KEY_LEFTCTRL, KEY_M], KEY_ENTER
 bind_key [KEY_LEFTCTRL, KEY_I], KEY_TAB
 bind_key [KEY_LEFTCTRL, KEY_LEFTBRACE], KEY_ESC
 
+# give a block
+@caps_led_state = 0
+bind_key KEY_CAPSLOCK do |event, operator|
+  @caps_led_state = @caps_led_state ^ 1
+  puts "########## CAPSLOCK LED #{@caps_led_state.zero? ? 'off' : 'on'} ##########"
+  operator.send_event EV_LED, LED_CAPSL, @caps_led_state
+end
+
 # binds related kill-ring
 bind_key [KEY_LEFTCTRL, KEY_W], [KEY_LEFTCTRL,KEY_X]
 bind_key [KEY_LEFTALT, KEY_W], [KEY_LEFTCTRL,KEY_C]
