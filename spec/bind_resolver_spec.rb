@@ -48,5 +48,20 @@ describe BindResolver do
   end
 
   describe "#resolve" do
+    before do
+      @resolver.bind [0, 1], [2, 3]
+      @resolver.bind [3, 1], [2, 4]
+      @resolver.bind [0, 2], [2, 5]
+      @resolver.bind [0, 1, 2], BindResolver.new(:ignore)
+    end
+    context "with an input which hit a bind" do
+      before do
+        @input = 1
+        @pressed_key_set = [0]
+      end
+      it "should return the bind" do
+        @resolver.resolve(@input, @pressed_key_set).output.should == [2, 3]
+      end
+    end
   end
 end
