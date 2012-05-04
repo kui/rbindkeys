@@ -43,8 +43,11 @@ module Rbindkeys
     end
 
     def handle event
-      LOG.info "read\t#{KeyEventHandler.get_state_by_value event} "+
-        "#{event.hr_code}(#{event.code})" if LOG.info?
+      if LOG.info?
+        LOG.info ""
+        LOG.info "read\t#{KeyEventHandler.get_state_by_value event} "+
+          "#{event.hr_code}(#{event.code})"
+      end
 
       # handle pre_key_bind_set
       event.code = (@pre_bind_resolver[event.code] or event.code)
@@ -81,7 +84,7 @@ module Rbindkeys
       end
 
       if release_bind_set.empty?
-        @key_resolver.default_value
+        @bind_resolver.default_value
       else
         release_bind_set.each do |kb|
           kb.output.each {|c|@operator.release_key c}

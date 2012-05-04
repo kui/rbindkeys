@@ -7,6 +7,8 @@ module Rbindkeys
   # device operations like send key event, send LED event, etc.
   class DeviceOperator
 
+    LOG = LogUtils.get_logger name
+
     # real event device
     attr_reader :device
 
@@ -50,7 +52,9 @@ module Rbindkeys
         end
 
       update_pressed_key_set event
-      @virtual.write_input_event event
+      size = @virtual.write_input_event event
+      LOG.info "write\t#{KeyEventHandler.get_state_by_value event} "+
+        "#{event.hr_code}(#{event.code})" if LOG.info?
     end
 
     def update_pressed_key_set event
