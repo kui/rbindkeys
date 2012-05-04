@@ -50,9 +50,14 @@ module Rbindkeys
           @cache_input_event
         else raise ArgumentError, "expect a InputEvent or 3 Fixnums (type, code, state)"
         end
+      dev = case event.type
+            when Revdev::EV_KEY; @virtual
+            when Revdev::EV_LED; @device
+            else @virtual
+            end
 
       update_pressed_key_set event
-      size = @virtual.write_input_event event
+      dev.write_input_event event
       LOG.info "write\t#{KeyEventHandler.get_state_by_value event} "+
         "#{event.hr_code}(#{event.code})" if LOG.info?
     end
