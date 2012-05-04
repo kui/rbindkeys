@@ -60,6 +60,7 @@ module Rbindkeys
         when 2; handle_pressing_event event
         else raise UnknownKeyValue, "expect 0, 1 or 2 as event.value(#{event.value})"
         end
+      LOG.debug "handle result: #{result}" if LOG.debug?
 
       if result  == :through
         fill_gap_pressed_state
@@ -99,7 +100,7 @@ module Rbindkeys
     # TODO fix bug: on Google Chrome, pressing C-fn invoke new window creation.
     # (C-fn mean pressing the n key with pressing C-f)
     def handle_press_event event
-      r = @bind_resolver.resolve event, @pressed_key_set
+      r = @bind_resolver.resolve event.code, @pressed_key_set
       if r.kind_of? KeyBind
         if r.output.kind_of? Array
           r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
