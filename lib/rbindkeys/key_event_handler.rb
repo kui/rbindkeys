@@ -60,7 +60,6 @@ module Rbindkeys
         when 2; handle_pressing_event event
         else raise UnknownKeyValue, "expect 0, 1 or 2 as event.value(#{event.value})"
         end
-      LOG.debug "handle result: #{result}" if LOG.debug?
 
       case result
       when :through

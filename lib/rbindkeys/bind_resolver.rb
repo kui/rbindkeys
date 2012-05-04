@@ -33,7 +33,6 @@ module Rbindkeys
 
     def resolve key_code, key_code_set
       arr = @tree[key_code]
-      LOG.debug "@tree[#{key_code}]: #{arr.inspect}" if LOG.debug?
 
       if arr.nil? or arr.empty?
         return @default_value
