@@ -34,3 +34,4 @@ TODO: Write usage instructions here
 * simplify config file ( `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
 * ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
 * notify when active a prefix key, changing ibus status, etc..
+* switch key_resolver when the active window is switched
