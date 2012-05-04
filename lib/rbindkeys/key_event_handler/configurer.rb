@@ -42,7 +42,7 @@ module Rbindkeys
 
       binded_resolver = resolver.resolve tail_input, tmp
       if binded_resolver == resolver.default_value
-        binded_resolver = BindResolver.new
+        binded_resolver = BindResolver.new :ignore
         resolver.bind input, binded_resolver
       end
 

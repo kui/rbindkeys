@@ -62,9 +62,11 @@ module Rbindkeys
         end
       LOG.debug "handle result: #{result}" if LOG.debug?
 
-      if result  == :through
+      case result
+      when :through
         fill_gap_pressed_state event
         @operator.send_event event
+      when :ignore
       end
 
       handle_pressed_keys event
@@ -106,8 +108,9 @@ module Rbindkeys
           r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
           r.output.each {|c| @operator.press_key c}
           @active_bind_set << r
+          @bind_resolver = @default_bind_resolver
         elsif r.output.kind_of? BindResolver
-          @bind_resolver = r
+          @bind_resolver = r.output
         end
         :ignore
       else

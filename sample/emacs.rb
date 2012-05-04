@@ -22,6 +22,7 @@ bind_key [KEY_LEFTCTRL, KEY_D], KEY_DELETE
 bind_key [KEY_LEFTCTRL, KEY_H], KEY_BACKSPACE
 bind_key [KEY_LEFTCTRL, KEY_M], KEY_ENTER
 bind_key [KEY_LEFTCTRL, KEY_I], KEY_TAB
+bind_key [KEY_LEFTCTRL, KEY_LEFTBRACE], KEY_ESC
 
 # binds related kill-ring
 bind_key [KEY_LEFTCTRL, KEY_W], [KEY_LEFTCTRL,KEY_X]
