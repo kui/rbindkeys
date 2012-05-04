@@ -64,7 +64,7 @@ module Rbindkeys
 
       case result
       when :through
-        fill_gap_pressed_state event
+        fill_gap_pressed_state event if event.value == 1
         @operator.send_event event
       when :ignore
       end
