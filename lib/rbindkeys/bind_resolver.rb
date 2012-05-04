@@ -24,13 +24,25 @@ module Rbindkeys
       end
 
       kb = KeyBind.new input, output
-      @tree[input.last] << kb
+      @tree[input.last] << kb # TODO implement a bubble insertion
+      @tree[input.last].sort!{|a,b| b.input.length <=> a.input.length}
       kb
     end
 
     def resolve key_code, key_code_set
+      arr = @tree[key_code]
+      if arr.nil? or arr.empty?
+        return @default_value
+      end
+
+      arr.each do |kb|
+        sub = kb.input - key_code_set
+        if sub == [kb.input.last]
+          return kb
+        end
+      end
+
+      @default_value
     end
-
   end
-
 end
