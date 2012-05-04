@@ -15,7 +15,7 @@ module Rbindkeys
         raise DuplicateNodeError, "1st arg (#{input}) was already entried"
       end
 
-      LOG.info "pre_bind_key #{input.inspect},\t#{output.inspect}"
+      LOG.info "pre_bind_key #{input.inspect},\t#{output.inspect}" if LOG.info?
 
       @pre_bind_resolver[input] = output
       [input, output]
@@ -25,7 +25,7 @@ module Rbindkeys
       input = KeyEventHandler.parse_code input
       output = KeyEventHandler.parse_code output
 
-      LOG.info "bind_key #{input.inspect},\t#{output.inspect}\t#{resolver}"
+      LOG.info "bind_key #{input.inspect},\t#{output.inspect}\t#{resolver}" if LOG.info?
 
       resolver.bind input, output
     end
@@ -35,10 +35,12 @@ module Rbindkeys
         raise ArgumentError, "expect to a block"
       end
 
-      input = KeyEventHandler.parse_code input.clone
-      tail_input = input.pop
+      input = KeyEventHandler.parse_code input
+      LOG.info "bind_prefix_key #{input.inspect}\t#{resolver}" if LOG.info?
+      tmp = input.clone
+      tail_input = tmp.pop
 
-      binded_resolver = resolver.resolve tail_input, input
+      binded_resolver = resolver.resolve tail_input, tmp
       if binded_resolver == resolver.default_value
         binded_resolver = BindResolver.new
         resolver.bind input, binded_resolver
@@ -46,7 +48,7 @@ module Rbindkeys
 
       @bind_resolver = binded_resolver
       yield
-      @binded_resolver = resolver
+      @bind_resolver = resolver
       binded_resolver
     end
 

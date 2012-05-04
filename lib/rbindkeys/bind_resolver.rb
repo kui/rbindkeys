@@ -3,6 +3,8 @@
 module Rbindkeys
 
   class BindResolver
+
+    LOG = LogUtils.get_logger name
     DEFAULT_DEFAULT_VALUE = :through
 
     attr_reader :tree
@@ -31,13 +33,15 @@ module Rbindkeys
 
     def resolve key_code, key_code_set
       arr = @tree[key_code]
+      LOG.debug "@tree[#{key_code}]: #{arr.inspect}" if LOG.debug?
+
       if arr.nil? or arr.empty?
         return @default_value
       end
 
       arr.each do |kb|
         sub = kb.input - key_code_set
-        if sub == [kb.input.last]
+        if sub.first == kb.input.last
           return kb
         end
       end
