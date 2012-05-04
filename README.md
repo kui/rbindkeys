@@ -6,15 +6,15 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'rbindkeys'
+	gem 'rbindkeys'
 
 And then execute:
 
-    $ bundle
+	$ bundle
 
 Or install it yourself as:
 
-    $ gem install rbindkeys
+	$ gem install rbindkeys
 
 ## Usage
 
@@ -27,3 +27,9 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## TODO
+
+* implement KeyEventHandler#bind_key's function ( `bind_key [KEY_FOO] { ... }` )
+* simplify config file ( `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
+* ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
