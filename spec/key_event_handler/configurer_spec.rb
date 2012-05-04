@@ -73,6 +73,20 @@ describe KeyEventHandler do
           @bind_set.should == [[[0, 1], [2, 3]]]
         end
       end
+      context "with an Array and a KeyResolver" do
+        it "construct @bind_set" do
+          @handler.bind_key [0,1], @res
+          @bind_set.should == [[[0,1], @res]]
+        end
+      end
+      context "with an Array and a block" do
+        it "construct @bind_set" do
+          @handler.bind_key [0,1] do
+            p 'foo'
+          end
+          @bind_set.first[1].class.should == Proc
+        end
+      end
       context "with mix classes" do
         it "construct @bind_set" do
           @handler.bind_key 1, [2, 3]
