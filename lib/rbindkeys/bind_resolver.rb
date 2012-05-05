@@ -48,4 +48,20 @@ module Rbindkeys
       @default_value
     end
   end
+
+  IGNORE_RESOLVER = BindResolver.new
+  class << IGNORE_RESOLVER
+    def bind input, output; end
+    def resolve code, pressed_code_set
+      :ignore
+    end
+  end
+
+  THROUGH_RESOLVER = BindResolver.new
+  class << THROUGH_RESOLVER
+    def bind input, output; end
+    def resolve code, pressed_code_set
+      :through
+    end
+  end
 end
