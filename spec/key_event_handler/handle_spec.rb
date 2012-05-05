@@ -143,11 +143,11 @@ describe KeyEventHandler do
     end
     context "with an event which can not be found in @active_bind_set" do
       before do
-        @resolver.should_receive(:default_value).and_return(:foo)
+        # @resolver.should_receive(:default_value).and_return(:foo)
       end
       it "should return @resolver.default_value" do
         @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 10, 0
-        @handler.handle_release_event(@event).should == :foo
+        @handler.handle_release_event(@event).should == :through
       end
     end
   end
