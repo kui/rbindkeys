@@ -13,6 +13,7 @@ require "rbindkeys/virtual_device"
 require "rbindkeys/device_operator"
 require "rbindkeys/key_event_handler"
 require "rbindkeys/bind_resolver"
+require "rbindkeys/fix_resolver"
 
 module Rbindkeys
 
@@ -24,6 +25,7 @@ module Rbindkeys
   class DeviceOperator; end
   class KeyEventHandler; end
   class BindResolver; end
+  class FixResolver; end
 
   class DuplicateNodeError < ArgumentError; end
   class UnknownKeyValue < Exception; end

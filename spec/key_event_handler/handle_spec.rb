@@ -123,7 +123,6 @@ describe KeyEventHandler do
       @ope.should_receive(:press_key).with(3)
       @ope.should_receive(:release_key).with(0)
       @handler.handle_press_event event
-      @resolve.stub(:default_value){:foo} # TODO raise warning when execute `rake`
     end
     context "with an event which can be found in @active_bind_set" do
       it "should return :ignore, update @active_bind_set and send messages to @ope" do
@@ -142,10 +141,7 @@ describe KeyEventHandler do
       end
     end
     context "with an event which can not be found in @active_bind_set" do
-      before do
-        # @resolver.should_receive(:default_value).and_return(:foo)
-      end
-      it "should return @resolver.default_value" do
+      it "should return :through" do
         @event = Revdev::InputEvent.new nil, Revdev::EV_KEY, 10, 0
         @handler.handle_release_event(@event).should == :through
       end

@@ -5,16 +5,19 @@ module Rbindkeys
   class BindResolver
 
     LOG = LogUtils.get_logger name
-    DEFAULT_DEFAULT_VALUE = :through
+    DEFAULT_VALUE = :through
 
     attr_reader :tree
 
-    # returned value if no binds hit
-    attr_reader :default_value
+    # delegate if cannot resolved
+    attr_reader :upper_resolver
 
-    def initialize default_value = DEFAULT_DEFAULT_VALUE
+    def initialize upper_resolver=:through
       @tree = {}
-      @default_value = default_value
+      if upper_resolver.kind_of? Symbol
+        upper_resolver = FixResolver.instance upper_resolver
+      end
+      @upper_resolver = upper_resolver
     end
 
     def bind input, output
@@ -32,36 +35,18 @@ module Rbindkeys
     end
 
     def resolve key_code, key_code_set
+      just_resolve(key_code, key_code_set) or
+        @upper_resolver.resolve(key_code, key_code_set)
+    end
+
+    def just_resolve key_code, key_code_set
       arr = @tree[key_code]
-
-      if arr.nil? or arr.empty?
-        return @default_value
-      end
-
       arr.each do |kb|
         sub = kb.input - key_code_set
-        if sub.first == kb.input.last
+        sub.first == kb.input.last and
           return kb
-        end
-      end
-
-      @default_value
-    end
-  end
-
-  IGNORE_RESOLVER = BindResolver.new
-  class << IGNORE_RESOLVER
-    def bind input, output; end
-    def resolve code, pressed_code_set
-      :ignore
-    end
-  end
-
-  THROUGH_RESOLVER = BindResolver.new
-  class << THROUGH_RESOLVER
-    def bind input, output; end
-    def resolve code, pressed_code_set
-      :through
+      end if not arr.nil?
+      nil
     end
   end
 end

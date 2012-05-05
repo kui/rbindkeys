@@ -29,7 +29,6 @@ describe KeyEventHandler do
       @res = mock Rbindkeys::BindResolver
 
       # define stubs
-      @res.stub(:default_value) { @defval }
       @res.stub(:bind) do |i, o|
         @bind_set << [i, o]
       end
@@ -38,6 +37,13 @@ describe KeyEventHandler do
           BindResolver.new
         else
           @defval
+        end
+      end
+      @res.stub(:just_resolve) do |input, pressed_key_set|
+        if input == 10
+          BindResolver.new
+        else
+          nil
         end
       end
       @res.stub(:kind_of?) do |klass|
@@ -123,6 +129,9 @@ describe KeyEventHandler do
           @bind_set.include?([[2],[3]]).should be_true
         end
       end
+    end
+
+    describe KeyEventHandler, "#window" do
     end
 
     describe "KeyEventHandler#load_config" do

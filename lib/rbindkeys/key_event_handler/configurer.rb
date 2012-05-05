@@ -53,10 +53,12 @@ module Rbindkeys
       tmp = input.clone
       tail_input = tmp.pop
 
-      binded_resolver = resolver.resolve tail_input, tmp
-      if binded_resolver == resolver.default_value
+      binded_resolver = resolver.just_resolve tail_input, tmp
+      if binded_resolver == nil
         binded_resolver = BindResolver.new :ignore
         resolver.bind input, binded_resolver
+      elsif not binded_resolver.kind_of? BindResolver
+        raise DuplicateNodeError, "the codes (#{input.inspect}) was already binded"
       end
 
       @bind_resolver = binded_resolver

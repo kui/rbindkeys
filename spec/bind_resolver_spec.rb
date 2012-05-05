@@ -93,8 +93,8 @@ describe BindResolver do
         @input = 2
         @pressed_key_set = [1]
       end
-      it "should return @default_value" do
-        @resolver.resolve(@input, @pressed_key_set).should == @resolver.default_value
+      it "should return default value" do
+        @resolver.resolve(@input, @pressed_key_set).should == :foo
       end
     end
   end
