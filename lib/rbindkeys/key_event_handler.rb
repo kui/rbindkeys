@@ -86,7 +86,7 @@ module Rbindkeys
       end
 
       if release_bind_set.empty?
-        @bind_resolver.default_value
+        :through
       else
         release_bind_set.each do |kb|
           kb.output.each {|c|@operator.release_key c}
@@ -102,12 +102,12 @@ module Rbindkeys
     # (C-fn mean pressing the n key with pressing C-f)
     def handle_press_event event
       r = @bind_resolver.resolve event.code, @pressed_key_set
+      @bind_resolver = @default_bind_resolver
       if r.kind_of? KeyBind
         if r.output.kind_of? Array
           r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
           r.output.each {|c| @operator.press_key c}
           @active_bind_set << r
-          @bind_resolver = @default_bind_resolver
           :ignore
         elsif r.output.kind_of? BindResolver
           @bind_resolver = r.output
