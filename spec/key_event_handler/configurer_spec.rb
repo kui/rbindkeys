@@ -159,6 +159,7 @@ describe KeyEventHandler do
       context 'with a BindResolver and a regex' do
         before do
           @arg_resolver = mock BindResolver
+          @arg_resolver.stub(:kind_of?).and_return(false)
           @arg_resolver.stub(:kind_of?).with(BindResolver).and_return(true)
         end
         it 'should return the BindResolver and added it to @window_bind_resolver_map' do
@@ -167,7 +168,6 @@ describe KeyEventHandler do
           res.should be_a BindResolver
           (@handler.window_bind_resolver_map.size - size).should == 1
           @handler.window_bind_resolver_map.value?(res).should be_true
-          res.upper_resolver.should == res
         end
       end
     end
