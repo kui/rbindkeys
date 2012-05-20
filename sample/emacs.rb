@@ -59,3 +59,4 @@ bind_prefix_key [KEY_LEFTCTRL, KEY_X] do
   bind_key KEY_B, [KEY_LEFTCTRL, KEY_TAB]
   bind_key KEY_G, []
 end
+

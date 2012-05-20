@@ -43,9 +43,9 @@ module Rbindkeys
       resolver.bind input, output
     end
 
-    def bind_prefix_key input, resolver=@bind_resolver
+    def bind_prefix_key input, resolver=@bind_resolver, &block
       if not block_given?
-        raise ArgumentError, "expect to a block"
+        raise ArgumentError, "expect a block"
       end
 
       input = KeyEventHandler.parse_code input
@@ -65,6 +65,22 @@ module Rbindkeys
       yield
       @bind_resolver = resolver
       binded_resolver
+    end
+
+    def new_bind_resolver upper_resolver=@bind_resolver, &block
+      if not block_given?
+        raise ArgumentError, "expect a block"
+      end
+
+      new_resolver = BindResolver.new upper_resolver
+      @bind_resolver = new_resolver
+      yield
+      @bind_resolver = upper_resolver
+
+      new_resolver
+    end
+
+    def window arg
     end
 
   end
