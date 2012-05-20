@@ -174,4 +174,35 @@ describe KeyEventHandler do
     end
   end
 
+  describe '#active_window_changed' do
+    before do
+      @window = mock ActiveWindowX::Window
+    end
+    context 'with a Window, which contains "foo" in the title,' do
+      before do
+        @window.stub(:title).and_return('foobar');
+        @handler.window nil, /foo/ do
+        end
+      end
+      it 'should change @bind_resolver' do
+        puts "phoooooo"
+        resolver = @handler.bind_resolver
+        @handler.active_window_changed(@window)
+        @handler.bind_resolver.should_not == resolver
+      end
+    end
+    context 'with a Window, which does not contain "foo" in the title,' do
+      before do
+        @window.stub(:title).and_return('barbaz');
+        @handler.window nil, /foo/ do
+        end
+      end
+      it 'should not change @bind_resolver' do
+        resolver = @handler.bind_resolver
+        @handler.active_window_changed(@window)
+        @handler.bind_resolver.should == resolver
+      end
+    end
+  end
+
 end
