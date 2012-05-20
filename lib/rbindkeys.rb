@@ -12,6 +12,7 @@ require "rbindkeys/virtual_device"
 
 require "rbindkeys/device_operator"
 require "rbindkeys/key_event_handler"
+require "rbindkeys/window_matcher"
 require "rbindkeys/bind_resolver"
 require "rbindkeys/fix_resolver"
 
@@ -23,6 +24,7 @@ module Rbindkeys
   class VirtualDevice; end
 
   class DeviceOperator; end
+  class WindowMatcher; end
   class KeyEventHandler; end
   class BindResolver; end
   class FixResolver; end

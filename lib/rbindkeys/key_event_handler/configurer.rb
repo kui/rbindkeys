@@ -81,6 +81,30 @@ module Rbindkeys
     end
 
     def window upper_resolver, arg
+      if upper_resolver.nil?
+        upper_resolver = @bind_resolver
+      elsif upper_resolver.kind_of? Symbol
+        upper_resolver = FixResolver.instance upper_resolver
+      elsif not upper_resolver.kind_of? BindResolver
+        raise ArgumentError, "1nd argument is expected to be a BindResolver or"+
+          " a Symbol : #{ upper_resolver.to_s}"
+      end
+
+      if arg.kind_of? Regexp
+        arg = { :title => arg }
+      elsif arg.kind_of? Hash
+        arg.each do |k, v|
+          if not (k.kind_of?(Symbol) and v.kind_of?(Regexp))
+            raise ArgumentError, 'the 2nd argument Hash must only have'+
+              " Symbol keys and Regexp values : #{arg.inspect}"
+          end
+        end
+      else
+        raise ArgumentError, "2nd argument is expected to be a Hash or a Regexp : #{arg}"
+      end
+
+      @window_bind_resolver_map[WindowMatcher.new arg] =
+        BindResolver.new upper_resolver
     end
 
   end
