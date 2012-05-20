@@ -121,7 +121,7 @@ describe KeyEventHandler do
         end
       end
       context "with a existing prefix key" do
-        it "construct @bind_set" do
+        it "should construct @bind_set" do
           @handler.bind_prefix_key [0,10] do
             @handler.bind_key 2, 3
           end
@@ -132,6 +132,44 @@ describe KeyEventHandler do
     end
 
     describe KeyEventHandler, "#window" do
+      context 'with invalid arg' do
+        it 'should raise ArgumentError' do
+          lambda { @handler.window(nil, "foo") }.should raise_error
+          lambda { @handler.window(nil, :class => "bar") }.should raise_error
+        end
+      end
+      context 'with nil and a regex' do
+        it 'should return the BindResolver and added it to @window_bind_resolver_map' do
+          size = @handler.window_bind_resolver_map.size
+          res = @handler.window(nil, /foo/)
+          res.should be_a BindResolver
+          (@handler.window_bind_resolver_map.size - size).should == 1
+          @handler.window_bind_resolver_map.value?(res).should be_true
+        end
+      end
+      context 'with nil and a Hash having :class key' do
+        it 'should return the BindResolver and added it to @window_bind_resolver_map' do
+          size = @handler.window_bind_resolver_map.size
+          res = @handler.window(nil, :class => /foo/)
+          res.should be_a BindResolver
+          (@handler.window_bind_resolver_map.size - size).should == 1
+          @handler.window_bind_resolver_map.value?(res).should be_true
+        end
+      end
+      context 'with a BindResolver and a regex' do
+        before do
+          @arg_resolver = mock BindResolver
+          @arg_resolver.stub(:kind_of?).with(BindResolver).and_return(true)
+        end
+        it 'should return the BindResolver and added it to @window_bind_resolver_map' do
+          size = @handler.window_bind_resolver_map.size
+          res = @handler.window(@arg_resolver, /foo/)
+          res.should be_a BindResolver
+          (@handler.window_bind_resolver_map.size - size).should == 1
+          @handler.window_bind_resolver_map.value?(res).should be_true
+          res.upper_resolver.should == res
+        end
+      end
     end
 
     describe "KeyEventHandler#load_config" do
