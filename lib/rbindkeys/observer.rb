@@ -1,5 +1,6 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
+require "thread"
 require "revdev"
 
 module Rbindkeys
@@ -22,7 +23,10 @@ module Rbindkeys
       @virtual = VirtualDevice.new
       operator = DeviceOperator.new @device, @virtual
       @event_handler = KeyEventHandler.new operator
+      @event_handler_mutex = Mutex.new
       @config_file = config_name
+      @started = false
+      @window_observer = ActiveWindowX::EventListener.new
     end
 
     # main loop
@@ -39,33 +43,60 @@ module Rbindkeys
       trap :INT, method(:destroy)
       trap :TERM, method(:destroy)
 
+      start_window_observe
+
+      @started = true
       @device.listen do |event|
         begin
           if event.type != Revdev::EV_KEY
             @virtual.write_input_event event
           else
-            @event_handler.handle event
+            @event_handler_mutex.synchronize do
+              @event_handler.handle event
+            end
           end
         rescue => e
           LOG.error e
         end
       end
+    end
 
+    def start_window_observation
+      Thread.new do
+        @window_observer.start do |e|
+          @event_handler_mutex.synchronize do
+            @event_handler.active_window_changed e.window
+          end
+        end
+      end.abort_on_exception = true
     end
 
     def destroy *args
+      if not @started
+        LOG.error 'did not start to observe'
+        return
+      end
+
       begin
-        LOG.info "try device.ungrab"
+        LOG.info "try @device.ungrab"
         @device.ungrab
-        LOG.info "success"
+        LOG.info "=> success"
       rescue => e
         LOG.error e
       end
 
       begin
-        LOG.info "try virtural.destroy"
+        LOG.info "try @virtural.destroy"
         @virtual.destroy
-        LOG.info "success"
+        LOG.info "=> success"
+      rescue => e
+        LOG.error e
+      end
+
+      begin
+        LOG.info "try @window_observer.destory"
+        @window_observer.destory
+        LOG.info "=> success"
       rescue => e
         LOG.error e
       end

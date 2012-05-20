@@ -156,6 +156,9 @@ module Rbindkeys
       end
     end
 
+    def active_window_changed window
+    end
+
     class << self
       # parse and normalize to Fixnum/Array
       def parse_code code, depth = 0
