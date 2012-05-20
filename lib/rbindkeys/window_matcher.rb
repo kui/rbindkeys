@@ -12,8 +12,15 @@ module Rbindkeys
     end
 
     def match? app_name, title
-      (app_name and @app_name and app_name.match @app_name) or
-        (title and @title and title.match @title)
+        match_app?(app_name) and match_title?(title)
+    end
+
+    def match_app? app_name
+      app_name and @app_name and app_name.match @app_name
+    end
+
+    def match_title? title
+      title and @title and title.match @title
     end
 
   end
