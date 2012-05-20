@@ -43,7 +43,7 @@ module Rbindkeys
       trap :INT, method(:destroy)
       trap :TERM, method(:destroy)
 
-      start_window_observe
+      start_window_observation
 
       @started = true
       @device.listen do |event|

@@ -162,7 +162,6 @@ module Rbindkeys
       title = window.title
       app_name = window.app_name
       @window_bind_resolver_map.each do |matcher, bind_resolver|
-        LOG.debug "matching #{matcher.app_name.inspect}, #{matcher.title.inspect}" if LOG.debug?
         if matcher.match? app_name, title
           LOG.debug "match #{matcher.app_name.inspect}, #{matcher.title.inspect}" if LOG.debug?
           @bind_resolver = bind_resolver
