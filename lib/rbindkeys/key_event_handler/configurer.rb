@@ -80,7 +80,7 @@ module Rbindkeys
       new_resolver
     end
 
-    def window arg
+    def window upper_resolver, arg
     end
 
   end

@@ -1,6 +1,7 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
-require "rbindkeys/key_event_handler/configurer"
+require 'rbindkeys/key_event_handler/configurer'
+require 'active_window_x'
 
 module Rbindkeys
 
@@ -19,6 +20,10 @@ module Rbindkeys
     # current key bind set which retrive key binds with a key event
     attr_reader :bind_resolver
 
+    # a hash (key:WindowMatcher, val:BindResolver) to switch BindResolver
+    # by the title or app_name of active window
+    attr_reader :window_bind_resolver_map
+
     # proccessed resolver before bind_resolver
     attr_reader :pre_bind_resolver
 
@@ -32,6 +37,7 @@ module Rbindkeys
       @operator = device_operator
       @default_bind_resolver = BindResolver.new
       @bind_resolver = @default_bind_resolver
+      @window_bind_resolver_map = {}
       @pre_bind_resolver = {}
       @pressed_key_set = []
       @active_bind_set = []
