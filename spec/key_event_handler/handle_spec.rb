@@ -177,6 +177,9 @@ describe KeyEventHandler do
   describe '#active_window_changed' do
     before do
       @window = mock ActiveWindowX::Window
+      @window.stub(:app_name).and_return('qux');
+      @resolver2 = mock BindResolver
+      BindResolver.stub!(:new){@resolver2}
     end
     context 'with a Window, which contains "foo" in the title,' do
       before do

@@ -144,7 +144,8 @@ describe KeyEventHandler do
           res = @handler.window(nil, /foo/)
           res.should be_a BindResolver
           (@handler.window_bind_resolver_map.size - size).should == 1
-          @handler.window_bind_resolver_map.value?(res).should be_true
+          p '--------------'
+          Hash[*@handler.window_bind_resolver_map.flatten].value?(res).should be_true
         end
       end
       context 'with nil and a Hash having :class key' do
@@ -153,7 +154,7 @@ describe KeyEventHandler do
           res = @handler.window(nil, :class => /foo/)
           res.should be_a BindResolver
           (@handler.window_bind_resolver_map.size - size).should == 1
-          @handler.window_bind_resolver_map.value?(res).should be_true
+          Hash[*@handler.window_bind_resolver_map.flatten].value?(res).should be_true
         end
       end
       context 'with a BindResolver and a regex' do
@@ -167,7 +168,7 @@ describe KeyEventHandler do
           res = @handler.window(@arg_resolver, /foo/)
           res.should be_a BindResolver
           (@handler.window_bind_resolver_map.size - size).should == 1
-          @handler.window_bind_resolver_map.value?(res).should be_true
+          Hash[*@handler.window_bind_resolver_map.flatten].value?(res).should be_true
         end
       end
     end
