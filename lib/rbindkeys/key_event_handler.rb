@@ -37,7 +37,7 @@ module Rbindkeys
       @operator = device_operator
       @default_bind_resolver = BindResolver.new
       @bind_resolver = @default_bind_resolver
-      @window_bind_resolver_map = {}
+      @window_bind_resolver_map = []
       @pre_bind_resolver = {}
       @pressed_key_set = []
       @active_bind_set = []
@@ -157,6 +157,21 @@ module Rbindkeys
     end
 
     def active_window_changed window
+      LOG.debug "change active_window (title:#{window.title})" if LOG.debug?
+
+      title = window.title
+      app_name = window.app_name
+      @window_bind_resolver_map.each do |matcher, bind_resolver|
+        LOG.debug "matching #{matcher.app_name.inspect}, #{matcher.title.inspect}" if LOG.debug?
+        if matcher.match? app_name, title
+          LOG.debug "match #{matcher.app_name.inspect}, #{matcher.title.inspect}" if LOG.debug?
+          @bind_resolver = bind_resolver
+          return
+        end
+      end
+
+      LOG.debug "no match" if LOG.debug?
+      return
     end
 
     class << self

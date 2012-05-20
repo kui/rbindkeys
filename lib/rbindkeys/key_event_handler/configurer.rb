@@ -103,8 +103,10 @@ module Rbindkeys
         raise ArgumentError, "2nd argument is expected to be a Hash or a Regexp : #{arg}"
       end
 
-      @window_bind_resolver_map[WindowMatcher.new arg] =
-        BindResolver.new upper_resolver
+      resolver = BindResolver.new(upper_resolver)
+      @window_bind_resolver_map.push [WindowMatcher.new(arg), resolver]
+
+      resolver
     end
 
   end
