@@ -61,9 +61,9 @@ module Rbindkeys
       # swich to handle event with event.value
       result =
         case event.value
-        when 0; handle_release_event event
-        when 1; handle_press_event event
-        when 2; handle_pressing_event event
+        when 0 then handle_release_event event
+        when 1 then handle_press_event event
+        when 2 then handle_pressing_event event
         else raise UnknownKeyValue, "expect 0, 1 or 2 as event.value(#{event.value})"
         end
 
@@ -72,6 +72,7 @@ module Rbindkeys
         fill_gap_pressed_state event if event.value == 1
         @operator.send_event event
       when :ignore
+        # ignore the original event
       end
 
       handle_pressed_keys event
@@ -181,9 +182,9 @@ module Rbindkeys
 
       def get_state_by_value ev
         case ev.value
-        when 0; 'released '
-        when 1; 'pressed  '
-        when 2; 'pressing '
+        when 0 then 'released '
+        when 1 then 'pressed  '
+        when 2 then 'pressing '
         end
       end
     end

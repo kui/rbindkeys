@@ -41,8 +41,8 @@ module Rbindkeys
     def send_event *args
       event =
         case args.length
-        when 1; args[0]
-        when 3
+        when 1 then args[0]
+        when 3 then
           @cache_input_event ||= Revdev::InputEvent.new nil, 0, 0, 0
           @cache_input_event.type = args[0]
           @cache_input_event.code = args[1]
@@ -51,8 +51,8 @@ module Rbindkeys
         else raise ArgumentError, "expect a InputEvent or 3 Fixnums (type, code, state)"
         end
       dev = case event.type
-            when Revdev::EV_KEY; @virtual
-            when Revdev::EV_LED; @device
+            when Revdev::EV_KEY then @virtual
+            when Revdev::EV_LED then @device
             else @virtual
             end
 
@@ -65,9 +65,9 @@ module Rbindkeys
     def update_pressed_key_set event
       if event.type == Revdev::EV_KEY
         case event.value
-        when 0; @pressed_key_set.delete event.code
-        when 1; @pressed_key_set << event.code
-        when 2
+        when 0 then @pressed_key_set.delete event.code
+        when 1 then  @pressed_key_set << event.code
+        when 2 then # do nothing
         else raise UnknownKeyValue, "expect 0, 1 or 2"
         end
       end
