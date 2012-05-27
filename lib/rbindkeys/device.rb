@@ -16,9 +16,6 @@ module Rbindkeys
       end
     end
 
-    def release_all
-    end
-
   end
 
 end

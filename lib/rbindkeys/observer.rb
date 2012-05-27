@@ -10,8 +10,8 @@ module Rbindkeys
     include Revdev
 
     LOG = LogUtils.get_logger name
-
     VIRTUAL_DEVICE_NAME = "rbindkyes"
+    DEFAULT_TIMEOUT = 0.5
 
     attr_reader :device
     attr_reader :virtual
@@ -23,10 +23,10 @@ module Rbindkeys
       @virtual = VirtualDevice.new
       operator = DeviceOperator.new @device, @virtual
       @event_handler = KeyEventHandler.new operator
-      @event_handler_mutex = Mutex.new
       @config_file = config_name
       @started = false
       @window_observer = ActiveWindowX::EventListener.new
+      @timeout = DEFAULT_TIMEOUT
     end
 
     # main loop
@@ -43,32 +43,55 @@ module Rbindkeys
       trap :INT, method(:destroy)
       trap :TERM, method(:destroy)
 
-      start_window_observation
-
       @started = true
-      @device.listen do |event|
-        begin
-          if event.type != Revdev::EV_KEY
-            @virtual.write_input_event event
-          else
-            @event_handler_mutex.synchronize do
-              @event_handler.handle event
-            end
+      while true
+        ios = select_ios
+        if ios.nil?
+          # select timeout
+          # no op
+          next
+        end
+
+        LOG.info "" if LOG.info?
+        LOG.debug "select => #{ios.inspect}" if LOG.debug?
+
+        ios.first.each do |io|
+          case io
+          when @window_observer.connection then handle_x_event
+          when @device.file then handle_device_event
+          else LOG.error "unknown IO #{io.inspect}"
           end
-        rescue => e
-          LOG.error e
         end
       end
     end
 
-    def start_window_observation
-      Thread.new do
-        @window_observer.start do |e|
-          @event_handler_mutex.synchronize do
-            @event_handler.active_window_changed e.window
-          end
-        end
-      end.abort_on_exception = true
+    def select_ios
+      if @window_observer.pending_events_num != 0
+        @window_observer.connection
+      else
+        select [@window_observer.connection, @device.file], nil, nil, @timeout
+      end
+    end
+
+    def handle_x_event
+      event = @window_observer.listen_with_no_select
+      return if event.nil?
+
+      @event_handler.active_window_changed e.window
+    rescue => e
+      LOG.error e
+    end
+
+    def handle_device_event
+      event = @device.read_input_event
+
+      if event.type != Revdev::EV_KEY
+        @virtual.write_input_event event
+      else
+        @event_handler.handle event
+      end
+    rescue => e
+      LOG.error e
     end
 
     def destroy *args
@@ -95,7 +118,7 @@ module Rbindkeys
 
       begin
         LOG.info "try @window_observer.destory"
-        @window_observer.destory
+        @window_observer.destroy
         LOG.info "=> success"
       rescue => e
         LOG.error e

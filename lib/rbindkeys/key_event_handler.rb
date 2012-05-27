@@ -50,7 +50,6 @@ module Rbindkeys
 
     def handle event
       if LOG.info?
-        LOG.info ""
         LOG.info "read\t#{KeyEventHandler.get_state_by_value event} "+
           "#{event.hr_code}(#{event.code})"
       end

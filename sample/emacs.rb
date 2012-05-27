@@ -60,3 +60,5 @@ bind_prefix_key [KEY_LEFTCTRL, KEY_X] do
   bind_key KEY_G, []
 end
 
+window(:through, /terminal/i) do
+end
