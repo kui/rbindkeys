@@ -8,7 +8,7 @@ module Rbindkeys
 
     DEFAULT_LOG_OUTPUT = STDOUT
     DEFAULT_FORMAT = :simple
-    DEFAULT_LEVEL = Logger::DEBUG
+    DEFAULT_LEVEL = Logger::INFO
     @@output = DEFAULT_LOG_OUTPUT
     @@format = DEFAULT_FORMAT
     @@level = DEFAULT_LEVEL
