@@ -12,6 +12,7 @@ describe KeyEventHandler do
     @resolver = mock BindResolver
     @resolver2 = BindResolver.new
     BindResolver.stub!(:new){@resolver}
+    @resolver.stub!(:two_stroke?){false}
 
     @handler = KeyEventHandler.new @ope
   end
@@ -110,6 +111,16 @@ describe KeyEventHandler do
       end
       it "should return :foo" do
         @handler.handle_press_event(@event).should == :foo
+      end
+    end
+    context "with an event which hit no one and 2 stroke @bind_resolver" do
+      before do
+        @resolver.should_receive(:resolve).and_return(:foo)
+        @resolver.stub(:two_stroke?){true}
+      end
+      it "should return :foo" do
+        @handler.handle_press_event(@event).should == :foo
+        # TODO check to change @bind_resolver to @default_bind_resolver or @window_bind_resolver
       end
     end
   end
