@@ -53,8 +53,10 @@ module Rbindkeys
           next
         end
 
-        LOG.info "" if LOG.info?
-        LOG.debug "select => #{ios.inspect}" if LOG.debug?
+        if LOG.debug?
+          LOG.debug ""
+          LOG.debug "select => #{ios.inspect}"
+        end
 
         ios.each do |io|
           case io

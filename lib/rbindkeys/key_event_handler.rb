@@ -51,6 +51,7 @@ module Rbindkeys
 
     def handle event
       if LOG.info?
+        LOG.info "" until LOG.debug?
         LOG.info "read\t#{KeyEventHandler.get_state_by_value event} "+
           "#{event.hr_code}(#{event.code})"
       end
@@ -164,13 +165,16 @@ module Rbindkeys
       if not window.nil?
         title = window.title
         app_name = window.app_name
-        LOG.debug "change active_window: \"#{app_name}\", \"#{title}\"" if LOG.debug?
+        if LOG.info?
+          LOG.info "" until LOG.debug?
+          LOG.info "change active_window: \"#{app_name}\", \"#{title}\""
+        end
 
         @window_bind_resolver_map.each do |matcher, bind_resolver|
           if matcher.match? app_name, title
-            if LOG.debug?
-              LOG.debug "=> matcher #{matcher.app_name.inspect}, #{matcher.title.inspect}"
-              LOG.debug "   bind_resolver #{bind_resolver.inspect}"
+            if LOG.info?
+              LOG.info "=> matcher #{matcher.app_name.inspect}, #{matcher.title.inspect}"
+              LOG.info "   bind_resolver #{bind_resolver.inspect}"
             end
             @bind_resolver = bind_resolver
             @window_bind_resolver = bind_resolver
@@ -178,10 +182,13 @@ module Rbindkeys
           end
         end
       else
-        LOG.debug "change active_window: nil" if LOG.debug?
+        if LOG.info?
+          LOG.info "" until LOG.debug?
+          LOG.info "change active_window: nil"
+        end
       end
 
-      LOG.debug "=> no matcher" if LOG.debug?
+      LOG.info "=> no matcher" if LOG.info?
       @bind_resolver = @default_bind_resolver
       @window_bind_resolver = nil
       return
