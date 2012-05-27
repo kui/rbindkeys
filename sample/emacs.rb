@@ -1,11 +1,14 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
-## settings
-@swap_ctrl_with_caps = true
+## user settings
+
+# if you use a keyboard which have a left ctrl key at the left of "A" key,
+# then you must set false
+@swap_left_ctrl_with_caps = true
 
 ##
 
-if @swap_ctrl_with_caps
+if @swap_left_ctrl_with_caps
   pre_bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
   pre_bind_key KEY_LEFTCTRL, KEY_CAPSLOCK
 end
