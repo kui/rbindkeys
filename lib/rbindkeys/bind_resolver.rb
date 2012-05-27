@@ -12,12 +12,18 @@ module Rbindkeys
     # delegate if cannot resolved
     attr_reader :upper_resolver
 
-    def initialize upper_resolver=:through
+    # if this resolver is set by prefix key, then true
+    # else, false
+    attr_reader :two_stroke
+    alias :two_stroke? :two_stroke
+
+    def initialize upper_resolver=:through, two_stroke=false
       @tree = {}
       if upper_resolver.kind_of? Symbol
         upper_resolver = FixResolver.instance upper_resolver
       end
       @upper_resolver = upper_resolver
+      @two_stroke = two_stroke
     end
 
     def bind input, output

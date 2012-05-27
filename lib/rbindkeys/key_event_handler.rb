@@ -36,6 +36,7 @@ module Rbindkeys
     def initialize device_operator
       @operator = device_operator
       @default_bind_resolver = BindResolver.new
+      @window_bind_resolver = nil
       @bind_resolver = @default_bind_resolver
       @window_bind_resolver_map = []
       @pre_bind_resolver = {}
@@ -108,6 +109,11 @@ module Rbindkeys
     # (C-fn mean pressing the n key with pressing C-f)
     def handle_press_event event
       r = @bind_resolver.resolve event.code, @pressed_key_set
+
+      if @bind_resolver.two_stroke?
+        @bind_resolver = (@window_bind_resolver or @default_bind_resolver)
+      end
+
       if r.kind_of? KeyBind
         if r.output.kind_of? Array
           r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
@@ -155,23 +161,29 @@ module Rbindkeys
     end
 
     def active_window_changed window
-      title = window.title
-      app_name = window.app_name
-      LOG.debug "change active_window \"#{app_name}\", \"#{title}\"" if LOG.debug?
+      if not window.nil?
+        title = window.title
+        app_name = window.app_name
+        LOG.debug "change active_window: \"#{app_name}\", \"#{title}\"" if LOG.debug?
 
-      @window_bind_resolver_map.each do |matcher, bind_resolver|
-        if matcher.match? app_name, title
-          if LOG.debug?
-            LOG.debug "=> matcher #{matcher.app_name.inspect}, #{matcher.title.inspect}"
-            LOG.debug "   bind_resolver #{bind_resolver.inspect}"
+        @window_bind_resolver_map.each do |matcher, bind_resolver|
+          if matcher.match? app_name, title
+            if LOG.debug?
+              LOG.debug "=> matcher #{matcher.app_name.inspect}, #{matcher.title.inspect}"
+              LOG.debug "   bind_resolver #{bind_resolver.inspect}"
+            end
+            @bind_resolver = bind_resolver
+            @window_bind_resolver = bind_resolver
+            return
           end
-          @bind_resolver = bind_resolver
-          return
         end
+      else
+        LOG.debug "change active_window: nil" if LOG.debug?
       end
 
       LOG.debug "=> no matcher" if LOG.debug?
       @bind_resolver = @default_bind_resolver
+      @window_bind_resolver = nil
       return
     end
 
