@@ -33,7 +33,7 @@ module Rbindkeys
         raise ArgumentError, 'expect 1 arg with a block / 2 args'
       elsif output.kind_of? BindResolver
       elsif output.kind_of?(Array) or output.kind_of?(Fixnum)
-        output = KeyEventHandler.parse_code output
+        output = KeyEventHandler::parse_code output
       else
         raise ArgumentError, '2nd arg expect Array / Fixnum / BindResolver'
       end
@@ -48,7 +48,7 @@ module Rbindkeys
         raise ArgumentError, "expect a block"
       end
 
-      input = KeyEventHandler.parse_code input
+      input = KeyEventHandler::parse_code input
       LOG.info "bind_prefix_key #{input.inspect}\t#{resolver}" if LOG.info?
       tmp = input.clone
       tail_input = tmp.pop
@@ -73,9 +73,11 @@ module Rbindkeys
       end
 
       new_resolver = BindResolver.new upper_resolver
+
+      old_resolver = @bind_resolver
       @bind_resolver = new_resolver
       yield
-      @bind_resolver = upper_resolver
+      @bind_resolver = old_resolver
 
       new_resolver
     end
@@ -105,6 +107,13 @@ module Rbindkeys
 
       resolver = BindResolver.new(upper_resolver)
       @window_bind_resolver_map.push [WindowMatcher.new(arg), resolver]
+
+      if block_given?
+        old_resolver = @bind_resolver
+        @bind_resolver = resolver
+        yield
+        @bind_resolver = old_resolver
+      end
 
       resolver
     end

@@ -8,14 +8,20 @@ module Rbindkeys
 
     DEFAULT_LOG_OUTPUT = STDOUT
     DEFAULT_FORMAT = :simple
+    DEFAULT_LEVEL = Logger::DEBUG
+    @@output = DEFAULT_LOG_OUTPUT
     @@format = DEFAULT_FORMAT
+    @@level = DEFAULT_LEVEL
 
     class << self
 
       def get_logger progname
-        logger = Logger.new DEFAULT_LOG_OUTPUT
+        logger = Logger.new @@output
+
         logger.progname = progname
+        logger.level = @@level
         set_formatter logger
+
         logger
       end
 
@@ -32,8 +38,14 @@ module Rbindkeys
           exit false
         end
       end
-    end
 
+      # setter and reader methods for the class variables
+      [:output, :format, :level].each do |name|
+        eval "def #{name}; @@#{name} end"
+        eval "def #{name}= o; @@#{name} = o end"
+      end
+
+    end
   end
 
 end

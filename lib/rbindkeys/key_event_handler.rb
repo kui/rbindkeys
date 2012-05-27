@@ -108,7 +108,6 @@ module Rbindkeys
     # (C-fn mean pressing the n key with pressing C-f)
     def handle_press_event event
       r = @bind_resolver.resolve event.code, @pressed_key_set
-      @bind_resolver = @default_bind_resolver
       if r.kind_of? KeyBind
         if r.output.kind_of? Array
           r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
@@ -156,19 +155,23 @@ module Rbindkeys
     end
 
     def active_window_changed window
-      LOG.debug "change active_window (title:#{window.title})" if LOG.debug?
-
       title = window.title
       app_name = window.app_name
+      LOG.debug "change active_window \"#{app_name}\", \"#{title}\"" if LOG.debug?
+
       @window_bind_resolver_map.each do |matcher, bind_resolver|
         if matcher.match? app_name, title
-          LOG.debug "match #{matcher.app_name.inspect}, #{matcher.title.inspect}" if LOG.debug?
+          if LOG.debug?
+            LOG.debug "=> matcher #{matcher.app_name.inspect}, #{matcher.title.inspect}"
+            LOG.debug "   bind_resolver #{bind_resolver.inspect}"
+          end
           @bind_resolver = bind_resolver
           return
         end
       end
 
-      LOG.debug "no match" if LOG.debug?
+      LOG.debug "=> no matcher" if LOG.debug?
+      @bind_resolver = @default_bind_resolver
       return
     end
 

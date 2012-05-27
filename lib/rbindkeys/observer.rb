@@ -43,6 +43,7 @@ module Rbindkeys
       trap :INT, method(:destroy)
       trap :TERM, method(:destroy)
 
+      # start main loop
       @started = true
       while true
         ios = select_ios
@@ -55,7 +56,7 @@ module Rbindkeys
         LOG.info "" if LOG.info?
         LOG.debug "select => #{ios.inspect}" if LOG.debug?
 
-        ios.first.each do |io|
+        ios.each do |io|
           case io
           when @window_observer.connection then handle_x_event
           when @device.file then handle_device_event
@@ -67,9 +68,14 @@ module Rbindkeys
 
     def select_ios
       if @window_observer.pending_events_num != 0
-        @window_observer.connection
+        [@window_observer.connection]
       else
-        select [@window_observer.connection, @device.file], nil, nil, @timeout
+        ios = select [@window_observer.connection, @device.file], nil, nil, @timeout
+        if ios.nil?
+          nil
+        else
+          ios.first
+        end
       end
     end
 
@@ -77,9 +83,7 @@ module Rbindkeys
       event = @window_observer.listen_with_no_select
       return if event.nil?
 
-      @event_handler.active_window_changed e.window
-    rescue => e
-      LOG.error e
+      @event_handler.active_window_changed event.window
     end
 
     def handle_device_event
@@ -90,8 +94,6 @@ module Rbindkeys
       else
         @event_handler.handle event
       end
-    rescue => e
-      LOG.error e
     end
 
     def destroy *args
