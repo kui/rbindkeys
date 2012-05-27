@@ -111,11 +111,12 @@ module Rbindkeys
     def handle_press_event event
       r = @bind_resolver.resolve event.code, @pressed_key_set
 
-      if @bind_resolver.two_stroke?
-        @bind_resolver = (@window_bind_resolver or @default_bind_resolver)
-      end
-
       if r.kind_of? KeyBind
+
+        if @bind_resolver.two_stroke?
+          @bind_resolver = (@window_bind_resolver or @default_bind_resolver)
+        end
+
         if r.output.kind_of? Array
           r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
           r.output.each {|c| @operator.press_key c}
