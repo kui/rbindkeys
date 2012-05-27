@@ -51,7 +51,7 @@ module Rbindkeys
 
     def handle event
       if LOG.info?
-        LOG.info "" until LOG.debug?
+        LOG.info "" unless LOG.debug?
         LOG.info "read\t#{KeyEventHandler.get_state_by_value event} "+
           "#{event.hr_code}(#{event.code})"
       end
@@ -166,7 +166,7 @@ module Rbindkeys
         title = window.title
         app_name = window.app_name
         if LOG.info?
-          LOG.info "" until LOG.debug?
+          LOG.info "" unless LOG.debug?
           LOG.info "change active_window: \"#{app_name}\", \"#{title}\""
         end
 
@@ -183,7 +183,7 @@ module Rbindkeys
         end
       else
         if LOG.info?
-          LOG.info "" until LOG.debug?
+          LOG.info "" unless LOG.debug?
           LOG.info "change active_window: nil"
         end
       end
