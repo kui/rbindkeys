@@ -69,8 +69,7 @@ bind_prefix_key [KEY_LEFTCTRL, KEY_X] do
   bind_key KEY_K, [KEY_LEFTCTRL, KEY_W]
   bind_key KEY_S, [KEY_LEFTCTRL, KEY_S]
   bind_key KEY_B, [KEY_LEFTCTRL, KEY_TAB]
-  bind_key KEY_G, []
-  bind_key [KEY_LEFTCTRL, KEY_G], []
+  bind_key [KEY_LEFTCTRL, KEY_G], :ignore
 end
 
 window(:through, /terminal/i) do

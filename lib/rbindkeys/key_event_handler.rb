@@ -106,15 +106,23 @@ module Rbindkeys
       end
     end
 
-    # TODO fix bug: on Google Chrome, pressing C-fn invoke new window creation.
-    # (C-fn mean pressing the n key with pressing C-f)
+    def set_bind_resolver resolver
+      old_resolver = @bind_resolver if LOG.info?
+      @bind_resolver = resolver
+      LOG.info "switch bind_resolver: #{old_resolver} => "+
+        "#{@bind_resolver}" if LOG.info?
+      @bind_resolver
+    end
+
     def handle_press_event event
       r = @bind_resolver.resolve event.code, @pressed_key_set
+
+      LOG.debug "resolve result: #{r.inspect}" if LOG.debug?
 
       if r.kind_of? KeyBind
 
         if @bind_resolver.two_stroke?
-          @bind_resolver = (@window_bind_resolver or @default_bind_resolver)
+          set_bind_resolver (@window_bind_resolver or @default_bind_resolver)
         end
 
         if r.output.kind_of? Array
@@ -123,10 +131,12 @@ module Rbindkeys
           @active_bind_set << r
           :ignore
         elsif r.output.kind_of? BindResolver
-          @bind_resolver = r.output
+          set_bind_resolver r.output
           :ignore
         elsif r.output.kind_of? Proc
           r.output.call event, @operator
+        elsif r.output.kind_of? Symbol
+          r
         end
       else
         r
@@ -177,7 +187,7 @@ module Rbindkeys
               LOG.info "=> matcher #{matcher.app_name.inspect}, #{matcher.title.inspect}"
               LOG.info "   bind_resolver #{bind_resolver.inspect}"
             end
-            @bind_resolver = bind_resolver
+            set_bind_resolver bind_resolver
             @window_bind_resolver = bind_resolver
             return
           end
@@ -190,7 +200,7 @@ module Rbindkeys
       end
 
       LOG.info "=> no matcher" if LOG.info?
-      @bind_resolver = @default_bind_resolver
+      set_bind_resolver @default_bind_resolver
       @window_bind_resolver = nil
       return
     end

@@ -27,6 +27,7 @@ module Rbindkeys
       else
         raise ArgumentError, '1st arg expect Array / Fixnum'
       end
+
       if block_given?
         output = block
       elsif output.nil?
@@ -34,8 +35,10 @@ module Rbindkeys
       elsif output.kind_of? BindResolver
       elsif output.kind_of?(Array) or output.kind_of?(Fixnum)
         output = KeyEventHandler::parse_code output
+      elsif output == :through or output == :ignore
       else
-        raise ArgumentError, '2nd arg expect Array / Fixnum / BindResolver'
+        raise ArgumentError, '2nd arg expect Array / Fixnum / BindResolver / '+
+          'Symbol(:through/:ignore)'
       end
 
       LOG.info "bind_key #{input.inspect},\t#{output.inspect}\t#{resolver}" if LOG.info?
@@ -55,7 +58,7 @@ module Rbindkeys
 
       binded_resolver = resolver.just_resolve tail_input, tmp
       if binded_resolver == nil
-        binded_resolver = BindResolver.new :ignore
+        binded_resolver = BindResolver.new :ignore, true
         resolver.bind input, binded_resolver
       elsif not binded_resolver.kind_of? BindResolver
         raise DuplicateNodeError, "the codes (#{input.inspect}) was already binded"
