@@ -31,6 +31,7 @@ TODO: Write usage instructions here
 ## TODO
 
 * write documents and published on rubygem.org
+* remove @two_storoke and add PrefixBindResolver class
 * change BindResolver on input method system
 * simplify config file ( `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
 * ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
