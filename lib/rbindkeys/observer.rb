@@ -43,6 +43,9 @@ module Rbindkeys
       trap :INT, method(:destroy)
       trap :TERM, method(:destroy)
 
+      active_window = @window_observer.active_window
+      @event_handler.active_window_changed active_window if active_window
+
       # start main loop
       @started = true
       while true
