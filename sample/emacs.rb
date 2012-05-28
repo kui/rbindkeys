@@ -6,11 +6,19 @@
 # then you must set false
 @swap_left_ctrl_with_caps = true
 
+# for apple keyboard
+@swap_left_opt_with_left_cmd = true
+
 ##
 
 if @swap_left_ctrl_with_caps
   pre_bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
   pre_bind_key KEY_LEFTCTRL, KEY_CAPSLOCK
+end
+
+if @swap_left_opt_with_left_cmd
+  pre_bind_key KEY_LEFTMETA, KEY_LEFTALT
+  pre_bind_key KEY_LEFTALT, KEY_LEFTMETA
 end
 
 bind_key [KEY_LEFTCTRL, KEY_F], KEY_RIGHT
@@ -26,6 +34,7 @@ bind_key [KEY_LEFTCTRL, KEY_H], KEY_BACKSPACE
 bind_key [KEY_LEFTCTRL, KEY_M], KEY_ENTER
 bind_key [KEY_LEFTCTRL, KEY_I], KEY_TAB
 bind_key [KEY_LEFTCTRL, KEY_LEFTBRACE], KEY_ESC
+bind_key [KEY_LEFTCTRL, KEY_S], [KEY_LEFTCTRL, KEY_F]
 
 # give a block sample
 @caps_led_state = 0
