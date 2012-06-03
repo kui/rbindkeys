@@ -70,6 +70,7 @@ bind_prefix_key [KEY_LEFTCTRL, KEY_X] do
   bind_key KEY_S, [KEY_LEFTCTRL, KEY_S]
   bind_key KEY_B, [KEY_LEFTCTRL, KEY_TAB]
   bind_key [KEY_LEFTCTRL, KEY_G], :ignore
+  bind_key [KEY_LEFTCTRL, KEY_C], [KEY_LEFTALT, KEY_F4]
 end
 
 window(:through, /terminal/i) do
