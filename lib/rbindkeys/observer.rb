@@ -86,7 +86,7 @@ module Rbindkeys
 
     def handle_x_event
       event = @window_observer.listen_with_no_select
-      return if event.nil?
+      return if event.nil? or event.window.nil?
 
       @event_handler.active_window_changed event.window
     end
