@@ -18,8 +18,9 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'revdev'
   gem.add_dependency 'ruinput'
-  gem.add_development_dependency 'rake'
+  gem.add_dependency 'active_window_x'
   gem.add_development_dependency 'bundler'
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
 
 end
