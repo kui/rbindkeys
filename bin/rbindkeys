@@ -2,8 +2,4 @@
 
 require "rbindkeys"
 
-d = Rbindkeys::Observer.new *ARGV
-
-puts "type C-c if you terminate"
-
-d.start
+Rbindkeys::CLI::main
