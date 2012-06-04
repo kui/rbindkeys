@@ -19,9 +19,16 @@ describe CLI do
         end
       end
     end
-    context ', when ARGV have an event device,' do
-    end
-    context ', when ARGV have an invalid event device' do
+    context ', when ARGV have an argument,' do
+      before do
+        stub(ARGV){['foo']}
+      end
+      it 'should call Observer#new ' do
+        config = CLI::config
+        Observer.should_receive(:new){mock Observer}
+        CLI::main
+        CLI::config.should == config
+      end
     end
     context ', when ARGV have an option (--evdev-list)' do
     end
