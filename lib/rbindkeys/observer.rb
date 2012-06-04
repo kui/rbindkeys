@@ -1,6 +1,5 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
-require "thread"
 require "revdev"
 
 module Rbindkeys
