@@ -1,7 +1,7 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
 require 'rbindkeys'
-require 'evdev'
+require 'revdev'
 
 include Rbindkeys
 
@@ -32,6 +32,24 @@ describe CLI do
       end
     end
     context ', when ARGV have an option (--evdev-list)' do
+      before do
+        ARGV = ['--evdev-list']
+        @evdev = mock Revdev::EventDevice
+        @id = mock Object
+        @evdev.stub(:device_name){"foo"}
+        @evdev.stub(:device_id){@id}
+        @id.stub(:hr_bustype){'bar'}
+        Revdev::EventDevice.stub(:new){@evdev}
+        Dir.should_receive(:glob).with(CLI::EVDEVS).
+          and_return(['/dev/input/event4','/dev/input/event2',
+                      '/dev/input/event13'])
+        @stdout = StringIO.new
+        $stdout = @stdout
+      end
+      it 'should pring device info' do
+        CLI::main
+        @stdout.string.should match(%r!^/dev/input/event2!)
+      end
     end
     context ', when ARGV have an invalid option (--config)' do
       before do
