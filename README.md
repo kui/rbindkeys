@@ -1,4 +1,4 @@
-# Rbindkeys
+# rbindkeys
 
 a key remapper, which is configurable in ruby, for Linux and X Window System
 
@@ -20,8 +20,8 @@ Or install it yourself as:
 
 1. `rbindkeys -e > ~/.rbindkeys.rb`
 2. edit `~.rbindkeys.rb`
-3. select a keyboard device (see `rbindkeys --evdev-list`)
-4. execute `rbindkeys /dev/input/event2` if you selected "/dev/input/event2"
+3. select a keyboard device (see `sudo rbindkeys --evdev-list`)
+4. `sudo rbindkeys /dev/input/event2` if you selected "/dev/input/event2"
    as a target keyboard
 
 ## Contributing
@@ -38,8 +38,8 @@ Or install it yourself as:
 * a daemonize script
 * remove @two_storoke and add PrefixBindResolver class
 * change BindResolver on input method system
-* simplify config file ( `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
-* integrate ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
+* simplify config file (e.g. `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
+* integrate ibus controller (e.g. `bind_key "alt-grave", "toggle_ibus"` )
 * notification when active a prefix key, changing ibus status, etc..
 * fix bug
 	* the enter key cannot be release when `rbindkey` is executed
