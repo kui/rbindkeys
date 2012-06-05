@@ -45,7 +45,7 @@ Or install it yourself as:
 * fix bug
 	* the enter key cannot be release when `rbindkey` is executed
 
-## Other Key Remappers For Linux
+## Other Configurable Key Remappers For Linux
 
 * [x11keymacs](http://yashiromann.sakura.ne.jp/x11keymacs/index-en.html)
 * [xfumble](http://endoh-namazu.tierra.ne.jp/xfumble/)
