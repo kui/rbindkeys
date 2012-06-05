@@ -18,7 +18,7 @@ module Rbindkeys
       @@cmd = :observe
       def cmd; @@cmd end
 
-      # a location of a config file (default: "~/.rbindkey.rb")
+      # a location of a config file (default: "~/.rbindkeys.rb")
       @@config = "#{ENV['HOME']}/.rbindkeys.rb"
       def config; @@config end
 

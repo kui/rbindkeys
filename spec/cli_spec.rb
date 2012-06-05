@@ -23,7 +23,9 @@ describe CLI do
     context ', when ARGV have an argument,' do
       before do
         ARGV = ['foo']
-        Observer.should_receive(:new){mock Observer}
+        @observer = mock Observer
+        Observer.should_receive(:new){@observer}
+        @observer.should_receive(:start){nil}
       end
       it 'should call Observer#new ' do
         config = CLI::config
