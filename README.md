@@ -18,7 +18,11 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+1. `rbindkeys -e > ~/.rbindkeys.rb`
+2. edit `~.rbindkeys.rb`
+3. select a keyboard device (see `rbindkeys --evdev-list`)
+4. execute `rbindkeys /dev/input/event2` if you selected "/dev/input/event2"
+   as a target keyboard
 
 ## Contributing
 
@@ -30,9 +34,9 @@ TODO: Write usage instructions here
 
 ## TODO
 
-* write documents and published on rubygem.org
+* write documents and publish on rubygem.org
 * remove @two_storoke and add PrefixBindResolver class
 * change BindResolver on input method system
 * simplify config file ( `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
-* ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
+* integlate ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
 * notification when active a prefix key, changing ibus status, etc..
