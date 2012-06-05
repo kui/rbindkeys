@@ -35,8 +35,9 @@ Or install it yourself as:
 ## TODO
 
 * write documents and publish on rubygem.org
+* a daemonize script
 * remove @two_storoke and add PrefixBindResolver class
 * change BindResolver on input method system
 * simplify config file ( `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
-* integlate ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
+* integrate ibus controller ( `bind_key "alt-grave", "toggle_ibus"` )
 * notification when active a prefix key, changing ibus status, etc..
