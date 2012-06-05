@@ -29,7 +29,7 @@ module Rbindkeys
         case @@format
         when :simple
           logger.formatter = proc do |sev, date, prog, msg|
-            "#{msg}\n"
+            "* #{msg}\n"
           end
         when :default
         else

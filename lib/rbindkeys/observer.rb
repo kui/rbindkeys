@@ -31,6 +31,8 @@ module Rbindkeys
     # main loop
     def start
       @device.grab
+      @device.release_all_key
+
       @virtual.create VIRTUAL_DEVICE_NAME #, @device.device_id
 
       @event_handler.load_config @config_file
