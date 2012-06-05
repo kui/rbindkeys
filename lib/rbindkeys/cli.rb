@@ -19,7 +19,7 @@ module Rbindkeys
       def cmd; @@cmd end
 
       # a location of a config file (default: "~/.rbindkey.rb")
-      @@config = '~/.rbindkey.rb'
+      @@config = "#{ENV['HOME']}/.rbindkeys.rb"
       def config; @@config end
 
       @@usage = SUMMARY
@@ -64,7 +64,7 @@ BANNER
           err
         end
         evdev = ARGV.first
-        Observer.new @@config, evdev
+        Observer.new(@@config, evdev).start
       end
 
       def ls
