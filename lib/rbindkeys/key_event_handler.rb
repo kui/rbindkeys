@@ -164,7 +164,7 @@ module Rbindkeys
     def handle_pressed_keys event
       if event.value == 1
         @pressed_key_set << event.code
-        @pressed_key_set.sort! # TODO do not sort. implement an insertion like bubble
+        @pressed_key_set.sort! # TODO do not sort. implement an bubble insertion
       elsif event.value == 0
         if @pressed_key_set.delete(event.code).nil?
           LOG.warn "#{event.code} does not exists on @pressed_keys" if LOG.warn?
@@ -178,7 +178,7 @@ module Rbindkeys
         app_name = window.app_name
         if LOG.info?
           LOG.info "" unless LOG.debug?
-          LOG.info "change active_window: \"#{app_name}\", \"#{title}\""
+          LOG.info "change active_window: :class => \"#{app_name}\", :title => \"#{title}\""
         end
 
         @window_bind_resolver_map.each do |matcher, bind_resolver|
