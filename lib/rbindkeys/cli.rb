@@ -53,6 +53,10 @@ BANNER
         opt.on '-c VAL', '--config VAL', 'specifying your configure file' do |v|
           @@config = v
         end
+        opt.on '--print-example', 'print an example config' do |v|
+          @@cmd = :print_example
+        end
+
         opt.parse! ARGV
 
         @@usage = opt.help
@@ -82,6 +86,15 @@ BANNER
           rescue => ex
             puts ex
           end
+        end
+      end
+
+      def print_example
+        dir = File.dirname File.expand_path __FILE__
+        dir = File.expand_path File.join dir, '..', '..', 'sample'
+        file = File.join dir, 'emacs.rb'
+        IO.foreach file do |line|
+          puts "# #{line}"
         end
       end
 
