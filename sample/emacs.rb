@@ -21,20 +21,24 @@ if @swap_left_opt_with_left_cmd
   pre_bind_key KEY_LEFTALT, KEY_LEFTMETA
 end
 
+# cursor move
 bind_key [KEY_LEFTCTRL, KEY_F], KEY_RIGHT
 bind_key [KEY_LEFTCTRL, KEY_B], KEY_LEFT
 bind_key [KEY_LEFTCTRL, KEY_P], KEY_UP
 bind_key [KEY_LEFTCTRL, KEY_N], KEY_DOWN
 bind_key [KEY_LEFTCTRL, KEY_A], KEY_HOME
 bind_key [KEY_LEFTCTRL, KEY_E], KEY_END
+
+# page scroll
 bind_key [KEY_LEFTCTRL, KEY_V], KEY_PAGEDOWN
 bind_key [KEY_LEFTALT, KEY_V], KEY_PAGEUP
+
+# edit
 bind_key [KEY_LEFTCTRL, KEY_D], KEY_DELETE
 bind_key [KEY_LEFTCTRL, KEY_H], KEY_BACKSPACE
 bind_key [KEY_LEFTCTRL, KEY_M], KEY_ENTER
 bind_key [KEY_LEFTCTRL, KEY_I], KEY_TAB
 bind_key [KEY_LEFTCTRL, KEY_LEFTBRACE], KEY_ESC
-bind_key [KEY_LEFTCTRL, KEY_S], [KEY_LEFTCTRL, KEY_F]
 
 # give a block sample
 @caps_led_state = 0
@@ -44,34 +48,52 @@ bind_key KEY_CAPSLOCK do |event, operator|
   operator.send_event EV_LED, LED_CAPSL, @caps_led_state
 end
 
-# binds related kill-ring
+# cut, copy and paste
 bind_key [KEY_LEFTCTRL, KEY_W], [KEY_LEFTCTRL,KEY_X]
 bind_key [KEY_LEFTALT, KEY_W], [KEY_LEFTCTRL,KEY_C]
 bind_key [KEY_LEFTCTRL, KEY_Y], [KEY_LEFTCTRL,KEY_V]
 
 # kill line
 bind_key [KEY_LEFTCTRL, KEY_K] do |event, operator|
-  # select to end of line
+  # Shift+End : select text to end of line
   operator.press_key KEY_LEFTSHIFT
   operator.press_key KEY_END
   operator.release_key KEY_END
   operator.release_key KEY_LEFTSHIFT
 
-  # cut
+  # Ctrl+x : cut
   operator.press_key KEY_LEFTCTRL
   operator.press_key KEY_X
   operator.release_key KEY_X
   operator.release_key KEY_LEFTCTRL
 end
 
-# 2 stroke binds
+# 2 stroke key binds
+# if your input was not hit any bind_key, the input will be ignored
 bind_prefix_key [KEY_LEFTCTRL, KEY_X] do
+
+  # C-xk: close tab, etc.
   bind_key KEY_K, [KEY_LEFTCTRL, KEY_W]
-  bind_key KEY_S, [KEY_LEFTCTRL, KEY_S]
+
+  # C-xC-s: save
+  bind_key [KEY_LEFTCTRL, KEY_S], [KEY_LEFTCTRL, KEY_S]
+
+  # C-xb: next tab, etc.
   bind_key KEY_B, [KEY_LEFTCTRL, KEY_TAB]
+
+  # C-xC-g: ignore C-x prefix bind
   bind_key [KEY_LEFTCTRL, KEY_G], :ignore
+
+  # C-xC-c: close window
   bind_key [KEY_LEFTCTRL, KEY_C], [KEY_LEFTALT, KEY_F4]
 end
 
-window(:through, /terminal/i) do
+# settings per window class (or title)
+
+# through all key inputs if active
+window(:through, :class => /gnome-terminal/)
+
+# add new bind_key to default binds
+window(@default_bind_resolver, :class => /google-chrome/) do
+  bind_key [KEY_LEFTCTRL, KEY_S], [KEY_LEFTCTRL, KEY_F]
 end
