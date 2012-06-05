@@ -53,7 +53,7 @@ BANNER
         opt.on '-c VAL', '--config VAL', 'specifying your configure file' do |v|
           @@config = v
         end
-        opt.on '--print-example', 'print an example config' do |v|
+        opt.on '-e', '--print-example', 'print an example config' do |v|
           @@cmd = :print_example
         end
 
