@@ -6,6 +6,7 @@
 module Rbindkeys
   class KeyEventHandler
 
+    # pre-prosessed key codes replacement for all inputs
     def pre_bind_key input, output
       if not (input.kind_of? Fixnum and output.kind_of? Fixnum)
         raise ArgumentError, 'expect Fixnum for input and output'
@@ -21,6 +22,7 @@ module Rbindkeys
       [input, output]
     end
 
+    # define a new key binding
     def bind_key input, output=nil, resolver=@bind_resolver, &block
       if input.kind_of?(Array) or input.kind_of?(Fixnum)
         input = KeyEventHandler.parse_code input
@@ -46,6 +48,10 @@ module Rbindkeys
       resolver.bind input, output
     end
 
+    # setting for 2stroke key binding
+    # _input_ :: prefix key. (e.g. [KEY_LEFTCTRL, KEY_X] (C-x)
+    # _resolver_ :: upper bind_resolver for fall throught
+    # _block_ :: to define sub-binds on this prefix key bind
     def bind_prefix_key input, resolver=@bind_resolver, &block
       if not block_given?
         raise ArgumentError, "expect a block"
@@ -85,6 +91,17 @@ module Rbindkeys
       new_resolver
     end
 
+    # switch bind_resolver if the active window match _arg_
+    #
+    # _upper\_resolver_ :: a upper bind_resolver, :through, :ignore
+    # _arg_ :: a hash or a regexp
+    #
+    # ==arg
+    # if a hash, which have entries :title => Regexp and/or :class => Regexp,
+    # was given, this bind is active when the window title match with
+    # :title's Regexp AND the window class match with :class's Regexp.
+    # if a regexp was given, this bind is active when the window title match
+    # with the given regexp
     def window upper_resolver, arg
       if upper_resolver.nil?
         upper_resolver = @bind_resolver
