@@ -41,6 +41,7 @@ Or install it yourself as:
 * simplify config file (e.g. `bind_key [:ctrl, :m], :enter`, `bind_key "ctrl+m", "enter"` )
 * integrate ibus controller (e.g. `bind_key "alt-grave", "toggle_ibus"` )
 * notification when active a prefix key, changing ibus status, etc..
+* the LED manipulation does not work for bluetooth devices
 * fix bug
 	* the enter key cannot be release when `rbindkey` is executed
 
