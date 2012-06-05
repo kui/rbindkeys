@@ -1,6 +1,6 @@
 # Rbindkeys
 
-TODO: Write a gem description
+a key remapper, which is configurable in ruby, for Linux and X Window System
 
 ## Installation
 
@@ -43,3 +43,9 @@ Or install it yourself as:
 * notification when active a prefix key, changing ibus status, etc..
 * fix bug
 	* the enter key cannot be release when `rbindkey` is executed
+
+## Other Key Remappers For Linux
+
+* [x11keymacs](http://yashiromann.sakura.ne.jp/x11keymacs/index-en.html)
+* [xfumble](http://endoh-namazu.tierra.ne.jp/xfumble/)
+* [私家版 窓使いの憂鬱 Linux & Mac (Darwin) 対応版](http://www42.tok2.com/home/negidakude/)
