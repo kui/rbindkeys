@@ -11,6 +11,7 @@
 
 ##
 
+# pre_bind_key: pre-proccessed keybinding
 if @swap_left_ctrl_with_caps
   pre_bind_key KEY_CAPSLOCK, KEY_LEFTCTRL
   pre_bind_key KEY_LEFTCTRL, KEY_CAPSLOCK
