@@ -89,7 +89,11 @@ module Rbindkeys
       event = @window_observer.listen_with_no_select
       return if event.nil? or event.window.nil?
 
-      @event_handler.active_window_changed event.window
+      begin
+        @event_handler.active_window_changed event.window
+      rescue ActiveWindowX::Xlib::XErrorEvent => e
+        LOG.error e
+      end
     end
 
     def handle_device_event
