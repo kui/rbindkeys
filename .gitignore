@@ -7,7 +7,7 @@
 .bundle
 .config
 .yardoc
-Gemfile.lock
+/Gemfile.lock
 InstalledFiles
 Makefile
 _yardoc
@@ -21,3 +21,4 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+/.ruby-version
