@@ -19,7 +19,7 @@ Or install it yourself as:
 ## Usage
 
 1. `rbindkeys -e > ~/.rbindkeys.rb`
-2. edit `~.rbindkeys.rb`
+2. edit `~/.rbindkeys.rb`
 3. select a keyboard device (see `sudo rbindkeys --evdev-list`)
 4. `sudo rbindkeys /dev/input/event2` if you selected "/dev/input/event2"
    as a target keyboard
