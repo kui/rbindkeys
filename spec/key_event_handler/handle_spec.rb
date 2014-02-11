@@ -7,12 +7,12 @@ include Rbindkeys
 
 describe KeyEventHandler do
   before do
-    @ope = mock DeviceOperator
+    @ope = double DeviceOperator
     @ope.stub(:pressed_key_set){ [] }
-    @resolver = mock BindResolver
+    @resolver = double BindResolver
     @resolver2 = BindResolver.new
-    BindResolver.stub!(:new){@resolver}
-    @resolver.stub!(:two_stroke?){false}
+    BindResolver.stub(:new){@resolver}
+    @resolver.stub(:two_stroke?){false}
 
     @handler = KeyEventHandler.new @ope
   end
@@ -187,10 +187,10 @@ describe KeyEventHandler do
 
   describe '#active_window_changed' do
     before do
-      @window = mock ActiveWindowX::Window
+      @window = double ActiveWindowX::Window
       @window.stub(:app_name).and_return('qux');
-      @resolver2 = mock BindResolver
-      BindResolver.stub!(:new){@resolver2}
+      @resolver2 = double BindResolver
+      BindResolver.stub(:new){@resolver2}
     end
     context 'with a Window, which contains "foo" in the title,' do
       before do

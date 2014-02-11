@@ -7,8 +7,8 @@ include Rbindkeys
 
 describe DeviceOperator do
   before do
-    @dev = mock Device
-    @vdev = mock VirtualDevice
+    @dev = double Device
+    @vdev = double VirtualDevice
     @operator = DeviceOperator.new @dev, @vdev
   end
 

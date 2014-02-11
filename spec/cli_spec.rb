@@ -23,7 +23,7 @@ describe CLI do
     context ', when ARGV have an argument,' do
       before do
         ARGV = ['foo']
-        @observer = mock Observer
+        @observer = double Observer
         Observer.should_receive(:new){@observer}
         @observer.should_receive(:start){nil}
       end
@@ -48,7 +48,7 @@ describe CLI do
       before do
         @config = 'a_config_file'
         ARGV = ['--config', @config,'foodev']
-        @observer = mock Observer
+        @observer = double Observer
         Observer.should_receive(:new){@observer}
         @observer.should_receive(:start){nil}
       end
@@ -60,8 +60,8 @@ describe CLI do
     context ', when ARGV have an option (--evdev-list),' do
       before do
         ARGV = ['--evdev-list']
-        @evdev = mock Revdev::EventDevice
-        @id = mock Object
+        @evdev = double Revdev::EventDevice
+        @id = double Object
         @evdev.stub(:device_name){"foo"}
         @evdev.stub(:device_id){@id}
         @id.stub(:hr_bustype){'bar'}

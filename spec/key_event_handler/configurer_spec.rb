@@ -18,7 +18,7 @@ describe KeyEventHandler do
   end
 
   before do
-    @ope = mock DeviceOperator
+    @ope = double DeviceOperator
   end
 
   describe "bind keys methods" do
@@ -26,7 +26,7 @@ describe KeyEventHandler do
     before do
       @defval = :hoge
       @bind_set = []
-      @res = mock Rbindkeys::BindResolver
+      @res = double Rbindkeys::BindResolver
 
       # define stubs
       @res.stub(:bind) do |i, o|
@@ -49,7 +49,7 @@ describe KeyEventHandler do
       @res.stub(:kind_of?) do |klass|
         klass == Rbindkeys::BindResolver
       end
-      Rbindkeys::BindResolver.stub!(:new).and_return(@res)
+      Rbindkeys::BindResolver.stub(:new).and_return(@res)
 
       @handler = KeyEventHandler.new @ope
     end
@@ -159,7 +159,7 @@ describe KeyEventHandler do
       end
       context 'with a BindResolver and a regex' do
         before do
-          @arg_resolver = mock BindResolver
+          @arg_resolver = double BindResolver
           @arg_resolver.stub(:kind_of?).and_return(false)
           @arg_resolver.stub(:kind_of?).with(BindResolver).and_return(true)
         end
