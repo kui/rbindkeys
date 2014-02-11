@@ -2,4 +2,4 @@
 
 require "rbindkeys"
 
-Rbindkeys::CLI::main
+Rbindkeys::CLI::main ARGV

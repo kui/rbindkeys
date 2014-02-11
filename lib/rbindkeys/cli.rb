@@ -24,15 +24,15 @@ module Rbindkeys
 
       @@usage = SUMMARY
 
-      def main
+      def main args
         begin
-          parse_opt
+          parse_opt args
         rescue OptionParser::ParseError => e
           puts "ERROR #{e.to_s}"
           err
         end
 
-        method(@@cmd).call
+        method(@@cmd).call(args)
       end
 
       def err code=1
@@ -40,7 +40,7 @@ module Rbindkeys
         exit code
       end
 
-      def parse_opt
+      def parse_opt args
         opt = OptionParser.new <<BANNER
 #{SUMMARY}
 Usage: sudo #{$0} [--config file] #{EVDEVS}
@@ -57,21 +57,21 @@ BANNER
           @@cmd = :print_example
         end
 
-        opt.parse! ARGV
+        opt.parse! args
 
         @@usage = opt.help
       end
 
-      def observe
-        if ARGV.length != 1
+      def observe args
+        if args.length != 1
           puts 'ERROR invalid arguments'
           err
         end
-        evdev = ARGV.first
+        evdev = args.first
         Observer.new(@@config, evdev).start
       end
 
-      def ls
+      def ls args
         require 'revdev'
         Dir::glob(EVDEVS).sort do |a,b|
           am = a.match(/[0-9]+$/)
@@ -89,7 +89,7 @@ BANNER
         end
       end
 
-      def print_example
+      def print_example args
         dir = File.dirname File.expand_path __FILE__
         dir = File.expand_path File.join dir, '..', '..', 'sample'
         file = File.join dir, 'emacs.rb'
