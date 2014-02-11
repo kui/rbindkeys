@@ -1,4 +1,4 @@
-# -*- coding:undecided-unix; mode:ruby; -*-
+# -*- coding:utf-8; mode:ruby; -*-
 
 require 'rubygems'
 require 'rbindkeys/version'
