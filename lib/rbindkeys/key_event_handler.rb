@@ -99,7 +99,7 @@ module Rbindkeys
         release_bind_set.each do |kb|
           kb.output.each {|c|@operator.release_key c}
           if kb.input_recovery
-            kb.input.clone.delete_if {|c|c==event.code}.each {|c|@operator.press_key c}
+            kb.input.reject {|c| c == event.code }.each {|c| @operator.press_key c }
           end
         end
         :ignore
@@ -126,7 +126,7 @@ module Rbindkeys
         end
 
         if r.output.kind_of? Array
-          r.input.clone.delete_if{|c|c==event.code}.each {|c| @operator.release_key c}
+          r.input.reject {|c| c == event.code }.each {|c| @operator.release_key c }
           r.output.each {|c| @operator.press_key c}
           @active_bind_set << r
           :ignore
@@ -147,7 +147,7 @@ module Rbindkeys
       if @active_bind_set.empty?
         :through
       else
-        @active_bind_set.each {|kb| kb.output.each {|c| @operator.pressing_key c}}
+        @active_bind_set.each {|kb| kb.output.each {|c| @operator.pressing_key c } }
         :ignore
       end
     end
