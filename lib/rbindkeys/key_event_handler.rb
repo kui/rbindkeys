@@ -139,6 +139,9 @@ module Rbindkeys
           r
         end
       else
+        if @bind_resolver.two_stroke?
+          set_bind_resolver (@window_bind_resolver or @default_bind_resolver)
+        end
         r
       end
     end
