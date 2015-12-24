@@ -187,6 +187,7 @@ describe KeyEventHandler do
     before do
       @window = double ActiveWindowX::Window
       allow(@window).to receive(:app_name) { 'qux' }
+      allow(@window).to receive(:app_class) { 'Qux' }
       @resolver2 = double BindResolver
       allow(BindResolver).to receive(:new) { @resolver2 }
     end

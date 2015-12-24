@@ -9,9 +9,9 @@ module Rbindkeys
     attr_reader :app_name, :title, :app_class
 
     def initialize h
-      @app_name = (h[:class] or h[:app_name])
-      @app_class = (h[:app_class])
-      @title = (h[:title] or h[:name])
+      @app_name = h[:app_name]
+      @app_class = h[:app_class] || h[:class]
+      @title = h[:title] || h[:name]
 
       if @app_name.nil? and @app_class.nil? and @title.nil?
         raise ArgumentError, 'expect to be given :class, :app_name,'+
