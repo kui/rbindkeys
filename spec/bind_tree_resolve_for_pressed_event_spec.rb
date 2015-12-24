@@ -22,51 +22,47 @@ describe BindTree do
       end
       context "with unsorted pressed keys" do
         it "should rase" do
-          begin
+          expect do
             @bt.resolve_for_pressed_event(@ev, [2, 1])
-            violated "should raise"
-          rescue => e
-          end
+          end.to raise_error ArgumentError
         end
       end
       context "with binded pressed keys" do
         it "should return Arrays and pressing_binds added" do
           @ev.code = 0
-          @bt.resolve_for_pressed_event(@ev, [1,2]).output.should == [6]
+          expect(@bt.resolve_for_pressed_event(@ev, [1,2]).output).to eq [6]
           expected_pressing_binds = [1, 2, @ev.code]
-          @bt.active_key_binds[0].input.should == expected_pressing_binds
+          expect(@bt.active_key_binds[0].input).to eq expected_pressing_binds
 
           @ev.code = 2
-          @bt.resolve_for_pressed_event(@ev, []).output.should == [2]
+          expect(@bt.resolve_for_pressed_event(@ev, []).output).to eq [2]
           expected_pressing_binds = [@ev.code]
-          @bt.active_key_binds[1].input.should == expected_pressing_binds
+          expect(@bt.active_key_binds[1].input).to eq expected_pressing_binds
         end
       end
       context "with no binded pressed keys" do
         it "should return nil" do
           @ev.code = 5
-          @bt.resolve_for_pressed_event(@ev, []).should == @bt.default_value
-          @bt.resolve_for_pressed_event(@ev, [1]).should == @bt.default_value
+          expect(@bt.resolve_for_pressed_event(@ev, [])).to eq @bt.default_value
+          expect(@bt.resolve_for_pressed_event(@ev, [1])).to eq @bt.default_value
           @ev.code = 1
-          @bt.resolve_for_pressed_event(@ev, []).should == @bt.default_value
+          expect(@bt.resolve_for_pressed_event(@ev, [])).to eq @bt.default_value
         end
       end
       context "with pressed keys as super set of binded keys" do
         it "should return Arrays" do
           @ev.code = 0
-          @bt.resolve_for_pressed_event(@ev, [1,2,4,5]).output.should == [6]
-          @bt.resolve_for_pressed_event(@ev, [1,4,5,10]).output.should == [55]
+          expect(@bt.resolve_for_pressed_event(@ev, [1,2,4,5]).output).to eq [6]
+          expect(@bt.resolve_for_pressed_event(@ev, [1,4,5,10]).output).to eq [55]
         end
       end
       context "with 2 stroke keybind" do
         it "should return Arrays" do
           @ev.code = 4
           tree = @bt.resolve_for_pressed_event(@ev, [])
-          tree.class.should == BindTree
-          p tree.tree
-
+          expect(tree).to be_a BindTree
           @ev.code = 5
-          tree.resolve_for_pressed_event(@ev, []).output.should == [6]
+          expect(tree.resolve_for_pressed_event(@ev, []).output).to eq [6]
         end
       end
     end

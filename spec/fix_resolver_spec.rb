@@ -11,21 +11,12 @@ describe FixResolver do
       it "should return different instances" do
         f = FixResolver.instance :foo
         g = FixResolver.instance :bar
-        f.equal?(g).should be_false
+        expect(f).to_not eq g
       end
       it "should return different instances" do
         f = FixResolver.instance :foo
         g = FixResolver.instance :foo
-        f.equal?(g).should be_true
-      end
-    end
-  end
-
-  describe '.new' do
-    context 'with any arg' do
-      it 'should raise an exception' do
-        lambda{FixResolver.new}.should raise_error
-        lambda{FixResolver.new :foo}.should raise_error
+        expect(f).to eq g
       end
     end
   end
@@ -36,8 +27,8 @@ describe FixResolver do
     end
     context 'with any args' do
       it 'should raise an exception' do
-        lambda{@resolver.bind 1, 2}.should raise_error
-        lambda{@resolver.bind [], []}.should raise_error
+        expect { @resolver.bind 1,  2  }.to raise_error RuntimeError
+        expect { @resolver.bind [], [] }.to raise_error RuntimeError
       end
     end
   end
@@ -48,10 +39,9 @@ describe FixResolver do
     end
     context 'with any args' do
       it 'should return :foo' do
-        @resolver.resolve(1, []).should == :foo
-        @resolver.resolve(3, [1,2]).should == :foo
+        expect(@resolver.resolve(1, []   )).to eq :foo
+        expect(@resolver.resolve(3, [1,2])).to eq :foo
       end
     end
   end
-
 end

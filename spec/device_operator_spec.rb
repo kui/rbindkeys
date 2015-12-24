@@ -19,7 +19,7 @@ describe DeviceOperator do
         @value = 1
       end
       it "should call #send_event" do
-        @operator.should_receive(:send_event).with(Revdev::EV_KEY,@code,@value)
+        expect(@operator).to receive(:send_event).with(Revdev::EV_KEY, @code, @value)
         @operator.send_key @code, @value
       end
     end
@@ -33,8 +33,8 @@ describe DeviceOperator do
         @value = 1
       end
       it "should send a #write_input_event to @vdev" do
-        @vdev.should_receive(:write_input_event) do |ie|
-          ie.code.should == @code
+        expect(@vdev).to receive(:write_input_event) do |ie|
+          expect(ie.code).to be @code
           10
         end
         @operator.send_event @type, @code, @value
@@ -45,8 +45,8 @@ describe DeviceOperator do
         @ie = Revdev::InputEvent.new nil, Revdev::EV_KEY, 10, 1
       end
       it "should send a #write_input_event to @vdev" do
-        @vdev.should_receive(:write_input_event) do |ie|
-          ie.should == @ie
+        expect(@vdev).to receive(:write_input_event) do |ie|
+          expect(ie).to be @ie
           10
         end
         @operator.send_event @ie
