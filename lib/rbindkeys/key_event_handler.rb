@@ -139,6 +139,9 @@ module Rbindkeys
           r
         end
       else
+        if @bind_resolver.two_stroke?
+          set_bind_resolver (@window_bind_resolver or @default_bind_resolver)
+        end
         r
       end
     end
@@ -176,15 +179,16 @@ module Rbindkeys
       if not window.nil?
         title = window.title
         app_name = window.app_name
+        app_class = window.app_class
         if LOG.info?
           LOG.info "" unless LOG.debug?
-          LOG.info "change active_window: :class => \"#{app_name}\", :title => \"#{title}\""
+          LOG.info "change active_window: :app_name => \"#{app_name}\", :app_class => \"#{app_class}\", :title => \"#{title}\""
         end
 
         @window_bind_resolver_map.each do |matcher, bind_resolver|
-          if matcher.match? app_name, title
+          if matcher.match? app_name, app_class, title
             if LOG.info?
-              LOG.info "=> matcher #{matcher.app_name.inspect}, #{matcher.title.inspect}"
+              LOG.info "=> matcher #{matcher.app_name.inspect}, #{matcher.app_class.inspect}, #{matcher.title.inspect}"
               LOG.info "   bind_resolver #{bind_resolver.inspect}"
             end
             set_bind_resolver bind_resolver
