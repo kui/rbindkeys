@@ -182,7 +182,7 @@ module Rbindkeys
         app_class = window.app_class
         if LOG.info?
           LOG.info "" unless LOG.debug?
-          LOG.info "change active_window: :class => \"#{app_name}\", :app_class => \"#{app_class}\", :title => \"#{title}\""
+          LOG.info "change active_window: :app_name => \"#{app_name}\", :app_class => \"#{app_class}\", :title => \"#{title}\""
         end
 
         @window_bind_resolver_map.each do |matcher, bind_resolver|
