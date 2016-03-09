@@ -3,10 +3,8 @@
 require 'revdev'
 
 module Rbindkeys
-
   # device operations like send key event, send LED event, etc.
   class DeviceOperator
-
     LOG = LogUtils.get_logger name
 
     # real event device
@@ -18,27 +16,29 @@ module Rbindkeys
     # key code set which was send press event but is not send release event
     attr_reader :pressed_key_set
 
-    def initialize dev, vdev
+    def initialize(dev, vdev)
       @device = dev
       @virtual = vdev
       @pressed_key_set = []
     end
 
-    def release_key code
+    def release_key(code)
       send_key code, 0
     end
-    def press_key code
+
+    def press_key(code)
       send_key code, 1
     end
-    def pressing_key code
+
+    def pressing_key(code)
       send_key code, 2
     end
 
-    def send_key code, state
+    def send_key(code, state)
       send_event Revdev::EV_KEY, code, state
     end
 
-    def send_event *args
+    def send_event(*args)
       event =
         case args.length
         when 1 then args[0]
@@ -48,7 +48,7 @@ module Rbindkeys
           @cache_input_event.code = args[1]
           @cache_input_event.value = args[2]
           @cache_input_event
-        else raise ArgumentError, "expect a InputEvent or 3 Fixnums (type, code, state)"
+        else fail ArgumentError, 'expect a InputEvent or 3 Fixnums (type, code, state)'
         end
       dev = case event.type
             when Revdev::EV_KEY then @virtual
@@ -58,21 +58,19 @@ module Rbindkeys
 
       update_pressed_key_set event
       dev.write_input_event event
-      LOG.info "write\t#{KeyEventHandler.get_state_by_value event} "+
+      LOG.info "write\t#{KeyEventHandler.get_state_by_value event} " +
         "#{event.hr_code}(#{event.code})" if LOG.info?
     end
 
-    def update_pressed_key_set event
+    def update_pressed_key_set(event)
       if event.type == Revdev::EV_KEY
         case event.value
         when 0 then @pressed_key_set.delete event.code
-        when 1 then  @pressed_key_set << event.code
+        when 1 then @pressed_key_set << event.code
         when 2 then # do nothing
-        else raise UnknownKeyValue, "expect 0, 1 or 2"
+        else fail UnknownKeyValue, 'expect 0, 1 or 2'
         end
       end
     end
-
   end
-
 end

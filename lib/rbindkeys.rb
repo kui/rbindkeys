@@ -19,20 +19,6 @@ require 'rbindkeys/fix_resolver'
 require 'rbindkeys/cli'
 
 module Rbindkeys
-
-  class BindTree; end
-  class Observer; end
-  class Devicie; end
-  class VirtualDevice; end
-
-  class DeviceOperator; end
-  class WindowMatcher; end
-  class KeyEventHandler; end
-  class BindResolver; end
-  class FixResolver; end
-
-  class CLI; end
-
   class DuplicateNodeError < ArgumentError; end
   class UnknownKeyValue < Exception; end
 end

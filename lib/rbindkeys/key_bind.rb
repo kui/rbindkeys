@@ -2,9 +2,7 @@
 
 module Rbindkeys
   class KeyBind
-
     attr_reader :input
-
     attr_reader :output
 
     # when a signal of any input release event was accepted,
@@ -12,7 +10,7 @@ module Rbindkeys
     # if @inputs_recovery is false or nil, outputs are released.
     attr_reader :input_recovery
 
-    def initialize input, output, opt = {}
+    def initialize(input, output, opt={})
       @input = input
       @output = output
       @input_recovery = opt[:input_recovery]

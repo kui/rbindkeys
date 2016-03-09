@@ -1,15 +1,15 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
-require "revdev"
+require 'revdev'
+require 'active_window_x'
 
 module Rbindkeys
-
   # main event loop class
   class Observer
     include Revdev
 
     LOG = LogUtils.get_logger name
-    VIRTUAL_DEVICE_NAME = "rbindkyes"
+    VIRTUAL_DEVICE_NAME = 'rbindkeys'.freeze
     DEFAULT_TIMEOUT = 0.5
 
     attr_reader :device
@@ -17,7 +17,7 @@ module Rbindkeys
     attr_reader :event_handler
     attr_reader :config_file
 
-    def initialize config_name, device_location
+    def initialize(config_name, device_location)
       @device = Device.new device_location
       @virtual = VirtualDevice.new
       operator = DeviceOperator.new @device, @virtual
@@ -33,11 +33,11 @@ module Rbindkeys
       @device.grab
       @device.release_all_key
 
-      @virtual.create VIRTUAL_DEVICE_NAME #, @device.device_id
+      @virtual.create VIRTUAL_DEVICE_NAME # , @device.device_id
 
       @event_handler.load_config @config_file
 
-      @event_handler.bind_resolver.tree.each do |k,v|
+      @event_handler.bind_resolver.tree.each do |k, v|
         puts "#{k} => #{v.inspect}"
       end
 
@@ -49,7 +49,7 @@ module Rbindkeys
 
       # start main loop
       @started = true
-      while true
+      loop do
         ios = select_ios
         if ios.nil?
           # select timeout
@@ -58,7 +58,7 @@ module Rbindkeys
         end
 
         if LOG.debug?
-          LOG.debug ""
+          LOG.debug ''
           LOG.debug "select => #{ios.inspect}"
         end
 
@@ -106,39 +106,37 @@ module Rbindkeys
       end
     end
 
-    def destroy *args
-      if not @started
+    def destroy(*_args)
+      unless @started
         LOG.error 'did not start to observe'
         return
       end
 
       begin
-        LOG.info "try @device.ungrab"
+        LOG.info 'try @device.ungrab'
         @device.ungrab
-        LOG.info "=> success"
+        LOG.info '=> success'
       rescue => e
         LOG.error e
       end
 
       begin
-        LOG.info "try @virtural.destroy"
+        LOG.info 'try @virtural.destroy'
         @virtual.destroy
-        LOG.info "=> success"
+        LOG.info '=> success'
       rescue => e
         LOG.error e
       end
 
       begin
-        LOG.info "try @window_observer.destory"
+        LOG.info 'try @window_observer.destory'
         @window_observer.destroy
-        LOG.info "=> success"
+        LOG.info '=> success'
       rescue => e
         LOG.error e
       end
 
       exit true
     end
-
   end # of class
-
 end # of module Rbindkeys
