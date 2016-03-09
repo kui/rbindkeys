@@ -1,14 +1,13 @@
 # -*- coding:utf-8; mode:ruby; -*-
 
-require "revdev"
+require 'revdev'
 
 module Rbindkeys
-
   class Device < Revdev::EventDevice
-
     def release_all_key
       ie = Revdev::InputEvent.new nil, 0, 0, 0
-      Revdev.constants.select{|c| c.match(/^(?:KEY|BTN)/)}.each do |c|
+
+      Revdev.constants.grep(/^KEY|^BTN/).each do |c|
         ie.type = Revdev::EV_KEY
         ie.code = Revdev.const_get c
         ie.value = 0
@@ -19,7 +18,5 @@ module Rbindkeys
         write_input_event ie
       end
     end
-
   end
-
 end
